@@ -17,7 +17,7 @@ if exist ".git" (
   if errorlevel 1 pause
   exit /b
 )
-if not exist "prototipos\02-exploracao-local\dist\index.html" if not exist "node_modules\vite\bin\vite.js" (
+if not exist "app\dist\index.html" if not exist "node_modules\vite\bin\vite.js" (
   echo As dependencias ainda nao estao instaladas.
   echo Abra um terminal nesta pasta e execute: npm ci
   pause
@@ -28,7 +28,7 @@ echo Scratches
 echo Abra http://127.0.0.1:5174 no navegador.
 echo Use Ctrl+C para encerrar.
 echo.
-if not exist "prototipos\02-exploracao-local\dist\index.html" (
+if not exist "app\dist\index.html" (
   call npm run build
   if errorlevel 1 (
     pause

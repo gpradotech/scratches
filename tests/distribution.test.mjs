@@ -13,7 +13,7 @@ test('pacote real inicia sem node_modules, sem workspaces e sem catálogo pessoa
   try {
     for(const file of decodePackage(artifact.compressed,artifact).files){const target=path.join(root,file.path);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,Buffer.from(file.content,'base64'));}
     await fs.unlink(path.join(root,'node_modules/preserve.txt'));await fs.rmdir(path.join(root,'node_modules'));
-    await fs.unlink(path.join(root,'prototipos/02-exploracao-local/dist/catalogo/catalogo.json'));await fs.rmdir(path.join(root,'prototipos/02-exploracao-local/dist/catalogo'));
+    await fs.unlink(path.join(root,'app/dist/catalogo/catalogo.json'));await fs.rmdir(path.join(root,'app/dist/catalogo'));
     await assert.rejects(fs.access(path.join(root,'node_modules')));
     let output='';
     child=spawn(process.execPath,['--use-system-ca',path.join(root,'scripts/serve.mjs')],{cwd:root,windowsHide:true,env:{...process.env,SCRATCHES_PORT:'0',SCRATCHES_UPDATE_CHECKS:'0'},stdio:['ignore','pipe','pipe','ipc']});

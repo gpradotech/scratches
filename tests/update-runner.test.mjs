@@ -18,7 +18,7 @@ test('launcher instala, inicia a nova versão e só confirma após o sinal de pr
     assert.equal(await runApplication(root,{env:{...process.env,SCRATCHES_OPEN:'0'},readyTimeout:3000}),0);
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'))).version,'0.1.2');
     assert.equal((await readJSON(path.join(root,'.scratches/updates/journal.json'))).status,'committed');
-    assert.equal(await fs.readFile(path.join(root,'prototipos/02-exploracao-local/dist/catalogo/catalogo.json'),'utf8'),'{"private":"personal catalog"}');
+    assert.equal(await fs.readFile(path.join(root,'app/dist/catalogo/catalogo.json'),'utf8'),'{"private":"personal catalog"}');
   }finally{await cleanFixture(root);}
 });
 

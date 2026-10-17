@@ -8,10 +8,10 @@ import {execFileSync} from 'node:child_process';
 test('código público prepara catálogo vazio sem corpus privado e preserva catálogo existente', async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'scratches-catalog-'));
   try {
-    const app = path.join(root, 'prototipos/02-exploracao-local');
+    const app = path.join(root, 'app');
     const script = path.join(app, 'scripts/preparar-catalogo.mjs');
     await fs.mkdir(path.dirname(script), {recursive: true});
-    await fs.copyFile(new URL('../prototipos/02-exploracao-local/scripts/preparar-catalogo.mjs', import.meta.url), script);
+    await fs.copyFile(new URL('../app/scripts/preparar-catalogo.mjs', import.meta.url), script);
     const run = () => execFileSync(process.execPath, [script], {cwd: root, windowsHide: true});
     run();
     const target = path.join(app, 'public/catalogo/catalogo.json');

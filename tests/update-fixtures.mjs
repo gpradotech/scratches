@@ -16,10 +16,10 @@ export async function fixture(version='0.1.1',{server=`export const version=${JS
   const lock={name:'scratches',version,lockfileVersion:3,packages:{'':{name:'scratches',version,dependencies:pkg.dependencies}}};
   await write('package.json',JSON.stringify(pkg));await write('package-lock.json',JSON.stringify(lock));
   await write('scripts/serve.mjs',server);await write('scripts/run.mjs','// runner\n');await write('lib/update-installer.mjs','// installer\n');
-  for(const name of ['server/api.ts','server/store.ts','src/domain/model.ts'])await write('prototipos/02-exploracao-local/'+name,'// runtime fixture\n');
-  await write('prototipos/02-exploracao-local/dist/index.html','<div>Scratches '+version+'</div>');
-  await write('prototipos/02-exploracao-local/dist/assets/app.js',`// ${version}\n`);
-  await write('prototipos/02-exploracao-local/dist/catalogo/catalogo.json','{"private":"personal catalog"}');
+  for(const name of ['server/api.ts','server/store.ts','src/domain/model.ts'])await write('app/'+name,'// runtime fixture\n');
+  await write('app/dist/index.html','<div>Scratches '+version+'</div>');
+  await write('app/dist/assets/app.js',`// ${version}\n`);
+  await write('app/dist/catalogo/catalogo.json','{"private":"personal catalog"}');
   await write('dados/prototipo-02/workspace.json',JSON.stringify({schema:2,revision:1,projects:[],lyrics:{}}));
   await write('node_modules/preserve.txt','dependencies');
   await fs.mkdir(path.join(root,'.scratches'));

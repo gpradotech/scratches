@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const dir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const root = path.resolve(dir, '../..');
+const root = path.resolve(dir, '..');
 const out = path.join(dir, 'public/catalogo');
 await fs.mkdir(out, {recursive: true});
 const read = async p => JSON.parse(await fs.readFile(path.join(root, p), 'utf8'));

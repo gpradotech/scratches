@@ -13,5 +13,5 @@ test-results/
 Thumbs.db
 /dados/
 /.scratches/
-/prototipos/02-exploracao-local/public/catalogo/
+/app/public/catalogo/
 /servicos/feedback/php/config.php

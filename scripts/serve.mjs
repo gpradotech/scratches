@@ -2,13 +2,13 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {WorkspaceStore} from '../prototipos/02-exploracao-local/server/store.ts';
-import {workspaceApi} from '../prototipos/02-exploracao-local/server/api.ts';
+import {WorkspaceStore} from '../app/server/store.ts';
+import {workspaceApi} from '../app/server/api.ts';
 import {UpdateManager} from '../lib/updates.mjs';
 import {updatesApi} from '../lib/updates-api.mjs';
 import {feedbackApi} from '../lib/feedback-api.mjs';
 
-const appPath='prototipos/02-exploracao-local';
+const appPath='app';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
 export async function createApp({root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=Number(process.env.SCRATCHES_PORT || 5174),updateOptions={},feedbackOptions={}}={}) {
   const store=new WorkspaceStore(path.join(root,'dados/prototipo-02/workspace.json'));

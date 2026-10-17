@@ -11,7 +11,7 @@ async function addBuild(folder) {
     if (entry.isDirectory()) await addBuild(name); else if (entry.isFile()) files.add(name);
   }
 }
-await addBuild('prototipos/02-exploracao-local/dist');
+await addBuild('app/dist');
 const findings = [];
 for (const name of files) {
   const bytes = await fs.readFile(name).catch(() => null);

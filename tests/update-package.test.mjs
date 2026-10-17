@@ -41,7 +41,7 @@ test('instala e confirma sem tocar em catálogo, espaço local, configurações 
     await applyPreparedUpdate(root,{install:()=>assert.fail('Dependências não mudaram')});
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'))).version,'0.1.2');
     assert.deepEqual(await fs.readFile(path.join(root,'dados/prototipo-02/workspace.json')),queue);
-    assert.equal(await fs.readFile(path.join(root,'prototipos/02-exploracao-local/dist/catalogo/catalogo.json'),'utf8'),'{"private":"personal catalog"}');
+    assert.equal(await fs.readFile(path.join(root,'app/dist/catalogo/catalogo.json'),'utf8'),'{"private":"personal catalog"}');
     assert.equal(await fs.readFile(path.join(root,'node_modules/preserve.txt'),'utf8'),'dependencies');
     await confirmUpdate(root);
     const home=path.join(root,'.scratches/updates');assert.equal((await readJSON(path.join(home,'journal.json'))).status,'committed');
@@ -84,10 +84,10 @@ test('instalações de desenvolvimento e arquivos alterados não são sobrescrit
     await fs.mkdir(path.join(root,'.git'));await prepareUpdate(root,data.compressed,data);
     await assert.rejects(applyPreparedUpdate(root),/desenvolvimento/);await fs.rmdir(path.join(root,'.git'));
     await applyPreparedUpdate(root);await confirmUpdate(root);
-    await fs.writeFile(path.join(root,'prototipos/02-exploracao-local/dist/assets/app.js'),'user change');
+    await fs.writeFile(path.join(root,'app/dist/assets/app.js'),'user change');
     const next=await artifact('0.1.3');await prepareUpdate(root,next.compressed,next);
     await assert.rejects(applyPreparedUpdate(root),/modificados/);
-    assert.equal(await fs.readFile(path.join(root,'prototipos/02-exploracao-local/dist/assets/app.js'),'utf8'),'user change');
+    assert.equal(await fs.readFile(path.join(root,'app/dist/assets/app.js'),'utf8'),'user change');
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'))).version,'0.1.2');
   }finally{await cleanFixture(root);}
 });

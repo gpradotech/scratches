@@ -28,6 +28,14 @@ Pacotes, backups e diário ficam em `.scratches/updates/`. Uma instalação inte
 
 ## Preparar uma versão
 
+### Estrutura do código e compatibilidade com a primeira distribuição
+
+A aplicação atual fica em `app/`, na raiz do código-fonte. A Release v0.1.0 já publicada conserva a estrutura anterior; seus arquivos e hashes não devem ser substituídos. O caminho dos dados pessoais continua em `dados/prototipo-02/workspace.json` para preservar as instalações existentes.
+
+O atualizador incluído na v0.1.0 valida uma lista de caminhos da estrutura anterior e não aceita diretamente pacotes com `app/`. Antes de publicar uma próxima Release com essa estrutura, é necessário validar e documentar a transição, inclusive a preservação do catálogo e a recuperação em caso de falha. A renomeação do código em `main` não anuncia uma atualização aos usuários da v0.1.0.
+
+### Conferência para publicação
+
 1. Revisar código, APIs, textos, dados distribuíveis e notas da versão. Atualizar `package.json` e `package-lock.json`, incluindo `packages[""].version`.
 2. Executar `npm run check`, `npm test` e `npm run build:release`.
 3. Conferir o manifesto produzido em `dist/scratches-VERSAO.update.manifest.json`. O ZIP para download, `dist/scratches-VERSAO.zip`, contém exatamente os mesmos arquivos validados do pacote de atualização, dentro de uma pasta com o nome da versão. Ambos têm um arquivo `.sha256`. O empacotador usa uma lista de arquivos permitidos: runtime, frontend compilado, manifestos de dependências, inicializadores e documentação de atualização. Não inclui pesquisa, planejamento, referências visuais, protótipo 01, testes de desenvolvimento, mapas de código, `.env`, Git, caches, `node_modules`, catálogo pessoal, projetos ou letras.

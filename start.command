@@ -7,7 +7,7 @@ fi
 if [ -e .git ]; then
   exec npm run dev
 fi
-if [ ! -f prototipos/02-exploracao-local/dist/index.html ]; then
+if [ ! -f app/dist/index.html ]; then
   npm run build || exit 1
 fi
 exec node --use-system-ca scripts/run.mjs
