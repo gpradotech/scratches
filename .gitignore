@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.vite/
+coverage/
+playwright-report/
+test-results/
+*.log
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+Thumbs.db
+/dados/
+/.scratches/
+/prototipos/02-exploracao-local/public/catalogo/
+/servicos/feedback/php/config.php

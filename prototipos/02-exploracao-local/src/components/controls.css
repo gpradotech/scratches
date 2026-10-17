@@ -1,0 +1,173 @@
+/* Component states live here. Page styles own layout, never hover/pressed colors. */
+:root {
+  --primary-bg: linear-gradient(110deg,#8045f4,#6727e1);
+  --primary-hover-bg: linear-gradient(110deg,#9158ff,#7838ef);
+  --primary-active-bg: linear-gradient(110deg,#7137df,#5d20cc);
+  --primary-border: #a275ff;
+  --primary-hover-border: #b18aff;
+  --on-primary: #fff;
+  --control-bg: #161e29;
+  --control-border: #4b5a71;
+  --control-hover-bg: var(--hover-bg);
+  --control-hover-border: var(--hover-border);
+  --control-hover-text: var(--soft);
+  --control-active-bg: #9867ff24;
+  --danger-hover-bg: #ef444414;
+  --danger-hover-border: #b94444;
+  --danger-text: #ff6b6b;
+}
+
+.ui-button, .ui-icon-button {
+  --action-bg: var(--control-bg);
+  --action-border: var(--control-border);
+  --action-text: var(--text);
+  --action-hover-bg: var(--control-hover-bg);
+  --action-hover-border: var(--control-hover-border);
+  --action-hover-text: var(--control-hover-text);
+  --action-active-bg: var(--control-active-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--action-bg);
+  border: 1px solid var(--action-border);
+  color: var(--action-text);
+  border-radius: 6px;
+  padding: 12px 18px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 550;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.ui-button[data-variant="ghost"] {
+  --action-bg: transparent;
+  --action-border: transparent;
+  --action-text: var(--soft);
+}
+.ui-icon-button {
+  --action-bg: transparent;
+  --action-border: transparent;
+  --action-text: var(--muted);
+  min-height: 0;
+  padding: 5px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+.ui-icon-button[data-variant="secondary"] {
+  --action-bg: var(--control-bg);
+  --action-border: var(--control-border);
+}
+.ui-button[data-variant="primary"], .ui-icon-button[data-variant="primary"] {
+  --action-bg: var(--primary-bg);
+  --action-border: var(--primary-border);
+  --action-text: var(--on-primary);
+  --action-hover-bg: var(--primary-hover-bg);
+  --action-hover-border: var(--primary-hover-border);
+  --action-hover-text: var(--on-primary);
+  --action-active-bg: var(--primary-active-bg);
+  box-shadow: inset 0 1px 0 #ffffff1c;
+}
+.ui-button[data-variant="danger"] {
+  --action-bg: #733142;
+  --action-border: #c46a79;
+  --action-text: #fff;
+  --action-hover-bg: #8b354d;
+  --action-hover-border: #e08092;
+  --action-hover-text: #fff;
+  --action-active-bg: #602332;
+}
+.ui-icon-button[data-variant="danger"] {
+  --action-hover-bg: var(--danger-hover-bg);
+  --action-hover-border: var(--danger-hover-border);
+  --action-hover-text: var(--danger-text);
+  --action-active-bg: #ef444424;
+}
+.ui-icon-button[data-variant="plain"] {
+  --action-hover-bg: transparent;
+  --action-hover-border: transparent;
+  --action-active-bg: transparent;
+}
+.ui-icon-button[data-variant="plain"][aria-pressed="true"] {
+  --action-text: var(--soft);
+  --action-hover-text: var(--text);
+}
+.ui-icon-button[data-tone="danger"] {--action-hover-text: var(--danger-text)}
+:is(.ui-button, .ui-icon-button):hover:where(:not(:disabled):not([aria-disabled="true"]):not(:has(input:disabled))) {
+  background: var(--action-hover-bg);
+  border-color: var(--action-hover-border);
+  color: var(--action-hover-text);
+}
+:is(.ui-button, .ui-icon-button):active:where(:not(:disabled):not([aria-disabled="true"]):not(:has(input:disabled))) {
+  background: var(--action-active-bg);
+  color: var(--action-hover-text);
+}
+:is(.ui-button, .ui-icon-button):is(:disabled, [aria-disabled="true"], :has(input:disabled)) {
+  opacity: .42;
+  cursor: not-allowed;
+}
+.ui-button.small {font-size: 13px; padding: 8px 12px; min-height: 34px}
+.ui-button.wide {width: 100%}
+.ui-button[aria-expanded="true"] {border-color: var(--accent)}
+
+.ui-text-link {
+  --link-color: var(--muted);
+  --link-hover: var(--soft);
+  color: var(--link-color);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  font-size: var(--link-size, inherit);
+  text-decoration: none;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color .15s;
+  cursor: pointer;
+}
+.ui-text-link[data-size="sm"] {--link-size: 13px}
+.ui-text-link[data-size="xs"] {--link-size: 12px}
+.ui-text-link[aria-current="page"] {--link-color: var(--text)}
+.ui-text-link.project-track-title {--link-color: var(--text)}
+.ui-text-link[aria-pressed="true"] {--link-color: var(--soft)}
+.ui-text-link[data-tone="accent"] {--link-color: var(--soft); --link-hover: var(--soft)}
+.ui-text-link:is(:hover, :active):where(:not(:disabled):not([aria-disabled="true"])) {
+  color: var(--link-hover);
+  text-decoration-line: underline;
+}
+.ui-text-link[data-underline="false"]:is(:hover, :active) {text-decoration-line: none}
+.ui-text-link:disabled {opacity: .42; cursor: not-allowed}
+.text-select {font-size: 13px; min-width: 0}
+.text-select .language-select__control {cursor: pointer; min-height: 26px; gap: 6px; color: var(--muted)}
+.text-select .language-select__value-container {padding: 0; flex: none; white-space: nowrap}
+.text-select .language-select__dropdown-indicator {padding: 0; color: inherit}
+.text-select .language-select__single-value {color: inherit}
+.text-select .language-select__control:is(:hover, .language-select__control--is-focused) {color: var(--soft)}
+.text-select .language-select__control:hover .language-select__single-value {text-decoration: underline; text-underline-offset: 3px}
+.text-select .language-select__control--is-focused {outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px}
+.text-select .language-select__control--menu-is-open .language-select__dropdown-indicator {transform: rotate(180deg)}
+button.ui-text-link, .ui-text-link.text-button {display: inline-flex; align-items: center; gap: 6px; padding: 3px 0}
+.ui-surface-link {color: inherit; text-decoration: none; transition: color .15s}
+.ui-surface-link:hover {color: var(--soft)}
+.segment {display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--border); border-radius: 7px; background: #121821}
+.segment .ui-button {padding: 10px 21px; min-height: 0; font-size: 14px; font-weight: 400; border-radius: 5px}
+.segment .ui-button[data-variant="ghost"] {--action-text: var(--muted)}
+.ui-count-badge {display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 5px; padding: 6px 10px; background: #1b222e; color: var(--muted); font-size: 12px; font-weight: 400; white-space: nowrap}
+
+/* Fields keep their own focus ring; their inner icons never gain a button surface. */
+.check-label:has(input[type="checkbox"]:not(:disabled)),
+.check-label input[type="checkbox"]:not(:disabled) {cursor: pointer}
+.language-select__dropdown-indicator:hover, .language-select__clear-indicator:hover,
+.language-select__multi-value__remove:hover:not(:disabled) {color: var(--soft)}
+
+/* The number selects a whole lyric line; preview that scope on hover and keyboard focus. */
+.lyric-line:has(>.line-number:is(:hover, :focus-visible)) {background-color: #9867ff38}
+
+@media(max-width:760px) {
+  .segment .ui-button {padding: 10px 17px; font-size: 13px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .ui-button, .ui-icon-button, .ui-text-link, .ui-surface-link {transition: none}
+}

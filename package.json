@@ -1,0 +1,23 @@
+{
+  "name": "scratches",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "prototipos/*"
+  ],
+  "scripts": {
+    "start": "node --use-system-ca scripts/run.mjs",
+    "build:release": "npm run build && npm run check:privacy && node scripts/build-release.mjs",
+    "test:updates": "node --test tests/*.test.mjs",
+    "dev": "npm run dev --workspace @scratches/prototipo-02",
+    "build": "npm run build --workspace @scratches/prototipo-02",
+    "check": "npm run check --workspaces --if-present",
+    "check:privacy": "node scripts/check-public-privacy.mjs",
+    "check:privacy:history": "node scripts/check-public-privacy.mjs --history",
+    "test": "npm run test --workspaces --if-present && npm run test:updates",
+    "preview": "npm run preview --workspace @scratches/prototipo-02"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

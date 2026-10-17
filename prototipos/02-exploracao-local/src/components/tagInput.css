@@ -1,0 +1,4 @@
+.tag-input-field {display: flex; flex-direction: column; gap: 8px; min-width: 0}
+.tag-input-field label {font-size: 13px}
+.tag-input-field>.language-select-help, .tag-input-field>.error-text {margin: 0}
+.tag-input .language-select__input-container {min-width: 0; max-width: 100%}

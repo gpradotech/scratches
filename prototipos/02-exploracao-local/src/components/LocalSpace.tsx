@@ -1,0 +1,19 @@
+import {Button, FileButton} from './Controls.tsx';
+import {useState} from 'react';
+import type {Workspace} from '../domain/model.ts';
+import {validateWorkspace} from '../domain/model.ts';
+import {Dialog, Icon} from './UI.tsx';
+import type {Commit} from './ProjectDialogs.tsx';
+export function LocalSpace({workspace, commit, onClose, notify}: {workspace: Workspace; commit: Commit; onClose: () => void; notify: (m: string) => void}) {
+  const [restore, setRestore] = useState<Workspace | null>(null); const [error, setError] = useState(''); const [pending, setPending] = useState(false);
+  const [exported, setExported] = useState(false);
+  function backup() {const url = URL.createObjectURL(new Blob([JSON.stringify(workspace, null, 2)], {type: 'application/json'})); const link = document.createElement('a'); link.href = url; link.download = `scratches-backup-${new Date().toISOString().slice(0, 10)}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setExported(true); notify('Backup preparado para download.');}
+  return <Dialog title="Seu espaço local" onClose={onClose}>
+    <div className="local-space-intro"><span className="empty-icon"><Icon name="monitor" size={26}/></span><p>Seus projetos, letras e trechos ficam salvos neste computador. Exporte um backup para manter uma cópia ou continuar em outra máquina.</p></div>
+    <div className="local-stats"><span><strong>{workspace.projects.length}</strong>{workspace.projects.length === 1 ? 'projeto' : 'projetos'}</span><span><strong>{Object.keys(workspace.lyrics).length}</strong>{Object.keys(workspace.lyrics).length === 1 ? 'letra adicionada' : 'letras adicionadas'}</span><span><strong>{workspace.projects.reduce((n, p) => n + p.fragments.length, 0)}</strong>{workspace.projects.reduce((n, p) => n + p.fragments.length, 0) === 1 ? 'trecho salvo' : 'trechos salvos'}</span></div>
+    <div className="local-path"><strong>Salvamento automático</strong><p className="caption">Suas alterações são salvas neste computador. Fechar a aplicação não apaga seu acervo. Abas e janelas compartilham os mesmos dados.</p></div>
+    <h3>Backup e restauração</h3><p className="muted">Exporte uma cópia para guardar ou levar a outro computador.</p><div className="backup-actions"><Button onClick={backup}><Icon name="download"/>Exportar backup</Button><FileButton ><Icon name="upload"/>Importar backup<input type="file" accept=".json,application/json" onChange={e => {const file = e.target.files?.[0]; if (!file) return; if (file.size > 8_000_000) {setError('Escolha um backup de até 8 MB.'); return;} void file.text().then(raw => {const parsed: unknown = JSON.parse(raw); validateWorkspace(parsed); setRestore(parsed); setError('');}).catch(e => setError(e instanceof SyntaxError ? 'Não foi possível ler o backup. Escolha um arquivo .json exportado pelo Scratches.' : e.message)); e.target.value = '';}}/></FileButton></div>
+    {restore && <section className="restore-review"><h3>Conferir restauração</h3><p>O backup contém {restore.projects.length} {restore.projects.length === 1 ? 'projeto' : 'projetos'} e {Object.keys(restore.lyrics).length} {Object.keys(restore.lyrics).length === 1 ? 'letra' : 'letras'}. A restauração substituirá a coleção atual.</p>{!exported && <p className="caption">Exporte o espaço atual antes de confirmar, caso queira preservá-lo.</p>}<div className="dialog-actions"><Button disabled={pending} onClick={() => setRestore(null)}>Cancelar</Button><Button variant="primary" disabled={pending} onClick={() => {setPending(true); void commit(current => ({...restore, revision: current.revision})).then(() => {setRestore(null); notify('Backup restaurado.'); onClose();}).catch(e => setError(e.message)).finally(() => setPending(false));}}>{pending ? 'Restaurando…' : 'Substituir pelo backup'}</Button></div></section>}
+    {error && <p className="error-text" role="alert">{error}</p>}
+  </Dialog>;
+}

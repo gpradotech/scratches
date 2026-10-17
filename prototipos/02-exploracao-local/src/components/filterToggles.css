@@ -1,0 +1,6 @@
+.filter-toggles {display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; min-width: 0}
+.filter-toggles .check-label {line-height: 1.6; gap: 6px}
+.filter-toggles .check-label>input {margin: 0}
+@media(max-width:760px) {
+  .filter-toggles {flex-direction: column; align-items: flex-start; gap: 12px}
+}

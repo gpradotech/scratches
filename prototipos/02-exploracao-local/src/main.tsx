@@ -1,0 +1,13 @@
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App.tsx';
+import './components/controls.css';
+import './styles.css';
+import './components/projectTrack.css';
+import './components/trackSurface.css';
+import './components/songWorkspace.css';
+import './components/trackGallery.css';
+import './components/trackArtists.css';
+import './components/filterToggles.css';
+import './components/artistDiscography.css';
+createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

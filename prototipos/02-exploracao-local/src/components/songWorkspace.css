@@ -1,0 +1,33 @@
+/* Composition for lyric selection, destination picking and saved references. */
+.song-sidebar {position: sticky; top: 25px; display: flex; flex-direction: column; gap: 20px; min-width: 0}
+.song-sidebar .selection-panel {position: static}
+.song-projects {border: 1px solid var(--border); border-radius: 7px; background: #141a2299; padding: 24px; min-width: 0}
+.song-projects h2 {font-size: 23px; margin-bottom: 12px}
+.song-projects>.caption {margin-top: 0}
+.song-projects-list {list-style: none; padding: 0; margin: 20px 0 0; max-height: 260px; overflow: auto; scrollbar-width: thin}
+.song-projects-list li+li {border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px}
+.song-project-link {display: flex; align-items: flex-start; justify-content: space-between; gap: 12px}
+.song-project-link .ui-text-link {display: inline-flex; gap: 8px; align-items: center; min-width: 0; overflow-wrap: anywhere; font-size: 14px; line-height: 1.6}
+.song-project-link .ui-text-link svg {flex-shrink: 0}
+.song-project-link .ui-count-badge {flex-shrink: 0; padding: 3px 7px; font-size: 11px}
+.song-projects-list .caption {margin-top: 7px; font-size: 12px}
+.lyric-line {transition: background-color .15s}
+.lyric-line mark.saved-highlight {background: #9867ff18; color: inherit}
+.lyric-line[data-saved="true"] {box-shadow: inset 2px 0 #b087ff77}
+.project-picker-option.ui-button {width: 100%; justify-content: flex-start; text-align: left; white-space: normal; padding: 12px; font-weight: 400}
+.project-picker-option>span:first-of-type {flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px}
+.project-picker-option strong {font-size: 14px; overflow-wrap: anywhere}
+.project-picker-option small {font-size: 12px; color: var(--muted)}
+.project-picker-option>svg {flex-shrink: 0}
+.project-picker-status {display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; flex-shrink: 0; font-size: 12px}
+.project-picker-empty {color: var(--muted); font-size: 14px; padding: 16px 0; margin: 0}
+.project-picker-create {border-top: 1px solid var(--border); margin-top: 20px; padding-top: 20px}
+.project-picker-create .form-field {margin-top: 0}
+.project-create-actions {display: flex; align-items: center; justify-content: space-between; gap: 16px}
+@media(max-width:760px) {
+  .song-sidebar {position: static; width: 100%}
+  .song-projects {padding: 19px}
+  .project-picker-option.ui-button {gap: 10px}
+  .project-picker-status {font-size: 11px}
+}
+@media(prefers-reduced-motion:reduce) {.lyric-line {transition: none}}

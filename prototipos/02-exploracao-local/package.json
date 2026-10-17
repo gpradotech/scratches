@@ -1,0 +1,31 @@
+{
+  "name": "@scratches/prototipo-02",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare:catalog": "node scripts/preparar-catalogo.mjs",
+    "predev": "npm run prepare:catalog",
+    "dev": "vite --host 127.0.0.1 --port 5174 --strictPort",
+    "prebuild": "npm run prepare:catalog",
+    "build": "tsc --noEmit && vite build",
+    "check": "tsc --noEmit",
+    "test": "node --test src/domain/*.test.ts server/*.test.ts",
+    "preview": "vite preview --host 127.0.0.1 --port 4174 --strictPort"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "2.1.10",
+    "iso-639-3": "3.0.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-select": "5.10.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}

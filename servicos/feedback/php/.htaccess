@@ -1,0 +1,7 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule ^api/feedback/?$ index.php [END]
+
+<FilesMatch "^(receiver|config(?:\.example)?)\.php$">
+    Require all denied
+</FilesMatch>
