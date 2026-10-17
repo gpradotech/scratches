@@ -7,7 +7,9 @@ export async function runApplication(root,{env=process.env,readyTimeout=30000}={
   await recoverUpdate(root);
   let stopping=false,child,updating=false,expectedVersion=null,open=env.SCRATCHES_OPEN;
   const stop=()=>{stopping=true;if(child?.connected)child.send({type:'shutdown'});};
+  const message=message=>{if(message?.type==='shutdown')stop();};
   process.on('SIGINT',stop);process.on('SIGTERM',stop);
+  process.on('message',message);process.on('disconnect',stop);
   try {
     while(true) {
       if(stopping)return 0;
@@ -33,7 +35,7 @@ export async function runApplication(root,{env=process.env,readyTimeout=30000}={
       try{const journal=await applyPreparedUpdate(root);updating=true;expectedVersion=journal.version;}
       catch{await rollbackUpdate(root,'Não conseguimos instalar a atualização. A versão anterior foi preservada.');console.log('Não foi possível atualizar. Abrindo a versão anterior.');}
     }
-  }finally{process.off('SIGINT',stop);process.off('SIGTERM',stop);}
+  }finally{process.off('SIGINT',stop);process.off('SIGTERM',stop);process.off('message',message);process.off('disconnect',stop);}
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
   const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');

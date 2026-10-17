@@ -6,11 +6,11 @@ Pesquisa para suas linhas de scratch. Explore músicas e letras e reúna trechos
 
 É necessário ter Node.js 22.19 ou superior instalado. Extraia todos os arquivos do pacote antes de abrir a aplicação.
 
-- **Windows:** abra `iniciar-prototipo.cmd`.
+- **Windows:** abra `iniciar-app.cmd`.
 - **macOS:** entre na pasta extraída pelo Terminal e execute `sh start.command`.
 - **Terminal:** execute `npm start` na pasta extraída.
 
-Acesse **http://127.0.0.1:5174**. Mantenha o processo aberto enquanto usar a aplicação. Para encerrar, use Ctrl+C no terminal.
+Acesse **http://127.0.0.1:5174**. O inicializador abre o navegador e reutiliza uma instância saudável já aberta desta mesma pasta. Mantenha o terminal que iniciou a aplicação aberto durante o uso. Para encerrar, use Ctrl+C nesse terminal.
 
 O pacote inclui a interface compilada e o servidor local; não exige instalar dependências de desenvolvimento. Se a porta já estiver ocupada, confira se o Scratches está aberto em outra janela antes de iniciar uma segunda instância.
 

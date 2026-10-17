@@ -7,6 +7,7 @@ import {workspaceApi} from '../app/server/api.ts';
 import {UpdateManager} from '../lib/updates.mjs';
 import {updatesApi} from '../lib/updates-api.mjs';
 import {feedbackApi} from '../lib/feedback-api.mjs';
+import {instanceApi,instanceInfo} from '../lib/app-instance.mjs';
 
 const appPath='app';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
@@ -17,9 +18,11 @@ export async function createApp({root=path.resolve(path.dirname(fileURLToPath(im
   let manager;
   const workspace=workspaceApi(store);
   const feedback=feedbackApi(feedbackOptions);
+  const instance=instanceApi(await instanceInfo(root,'distribution'));
   const server=http.createServer(async(req,res)=>{
     const send=(status,text)=>{res.writeHead(status,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'});res.end(text);};
     try {
+      instance(req,res,()=>{});if(res.writableEnded)return;
       await feedback(req,res,()=>{});if(res.writableEnded)return;
       await updatesApi(manager)(req,res,()=>{});if(res.writableEnded)return;
       store.blocked=manager.phase==='restarting';

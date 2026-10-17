@@ -35,13 +35,13 @@ O ZIP pronto já contém os arquivos necessários do Scratches. Depois de instal
 ## Instalar no Windows
 
 1. Abra a pasta que você extraiu. **Não abra o aplicativo de dentro do ZIP.**
-2. Dê dois cliques em **`iniciar-prototipo.cmd`**. Apesar do nome, esse é o arquivo que abre o Scratches.
-3. Uma janela de terminal será aberta, com uma mensagem informando que o Scratches está disponível. **Deixe essa janela aberta durante o uso.**
+2. Dê dois cliques no inicializador do Windows. No código atual ele se chama **`iniciar-app.cmd`**. No ZIP da versão 0.1.0, publicado anteriormente, ele ainda se chama **`iniciar-prototipo.cmd`**.
+3. Uma janela de terminal será aberta, com uma mensagem informando que o Scratches está disponível. **Deixe essa janela aberta durante o uso.** O novo `iniciar-app.cmd` também abre o navegador e reconhece quando esta instalação já está rodando, sem iniciar outra cópia.
 4. Abra seu navegador e acesse **[http://127.0.0.1:5174](http://127.0.0.1:5174)**.
 
 Esse endereço abre a aplicação que está rodando no seu próprio computador. A página do GitHub serve para baixar o projeto e ler as instruções.
 
-Para encerrar, volte à janela do terminal e pressione **Ctrl+C**. Se o Windows pedir confirmação para encerrar o arquivo em lotes, confirme. Na próxima vez, basta abrir `iniciar-prototipo.cmd` e acessar o mesmo endereço.
+Para encerrar, volte à janela do terminal que iniciou a aplicação e pressione **Ctrl+C**. Se o Windows pedir confirmação para encerrar o arquivo em lotes, confirme. Na próxima vez, basta abrir o mesmo inicializador.
 
 ## Instalar no macOS
 
@@ -107,7 +107,7 @@ Apenas atualizar a página do navegador não instala uma nova versão. [Mais inf
 | Não encontro o arquivo para abrir | Extraia o ZIP inteiro e abra a pasta que contém `iniciar-prototipo.cmd` e `start.command`. No Windows, a extensão pode estar oculta e o nome aparecer apenas como `iniciar-prototipo`. |
 | O navegador não abriu sozinho | Abra-o e digite `http://127.0.0.1:5174` na barra de endereços. |
 | O endereço não abre ou parou de funcionar | Confira se a janela do terminal continua aberta. Se você a fechou, abra o Scratches novamente pelo inicializador. |
-| Aparece uma mensagem de porta ocupada | Pode haver outra janela do Scratches em execução. Use a instância já aberta ou encerre-a antes de tentar novamente. Não apague seus dados para resolver isso. |
+| Aparece uma mensagem de porta ocupada | Pode haver outra janela do Scratches em execução, inclusive uma versão antiga. Encerre-a com Ctrl+C no terminal que a iniciou e abra o inicializador novamente. O novo `iniciar-app.cmd` reutiliza automaticamente uma instância saudável da mesma pasta; ele não encerra outros programas. Não apague seus dados para resolver isso. |
 | Não aparece nenhuma música | O download desta versão vem com catálogo vazio. A inclusão de músicas ainda está em desenvolvimento; isso não indica erro de instalação. |
 | Não consigo salvar | Use uma pasta em que sua conta possa gravar arquivos, como uma pasta própria em Documentos. Se já tiver dados, preserve a pasta inteira e seus backups ao transferi-la. |
 | Meus projetos não aparecem depois de abrir outra cópia | Cada pasta do Scratches tem seus próprios dados. Abra a instalação anterior ou importe um backup exportado dela. |

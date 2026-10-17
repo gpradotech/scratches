@@ -6,7 +6,7 @@
     "app"
   ],
   "scripts": {
-    "start": "node --use-system-ca scripts/run.mjs",
+    "start": "node --use-system-ca scripts/open-app.mjs",
     "build:release": "npm run build && npm run check:privacy && node scripts/build-release.mjs",
     "test:updates": "node --test tests/*.test.mjs",
     "dev": "npm run dev --workspace @scratches/app",
