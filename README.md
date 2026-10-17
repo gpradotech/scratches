@@ -4,6 +4,12 @@
 
 O Scratches é uma ferramenta para DJs reunirem ideias para suas linhas: explorar músicas e letras, escolher palavras ou versos e organizar esses trechos em projetos. Ele roda no seu computador e você usa a interface pelo navegador, sem criar conta.
 
+## Preview
+
+![Tela Explorar do Scratches com pesquisa, filtros opcionais e músicas em lista](docs/images/scratches-preview.png)
+
+*Captura da interface com o catálogo usado no desenvolvimento. O download público começa com o catálogo vazio.*
+
 > **Sobre a versão 0.1.0:** o projeto ainda está em desenvolvimento. O download começa sem músicas, artistas, capas, letras ou projetos. Você já pode criar projetos e guardar backups, mas a inclusão de músicas e a conexão com catálogos ainda não estão disponíveis. Por isso, a pesquisa e a seleção de trechos ainda dependem de um catálogo fornecido separadamente.
 
 [**Baixar Scratches 0.1.0 para Windows ou macOS**](https://github.com/gpradotech/scratches/releases/download/v0.1.0/scratches-0.1.0.zip) · [Ver as versões publicadas](https://github.com/gpradotech/scratches/releases)
