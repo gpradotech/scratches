@@ -5,8 +5,10 @@ import {createHash} from 'node:crypto';
 import {ArtworkCache} from '../lib/artwork-cache.mjs';
 import {artworkSources,providerArtwork} from '../lib/artwork-source.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const catalog=JSON.parse(await fs.readFile(path.join(root,'app/public/catalogo/catalogo.json'),'utf8'));
+let catalog=await fs.readFile(path.join(root,'app/public/catalogo/catalogo.json'),'utf8').then(JSON.parse).catch(error=>{if(error.code!=='ENOENT')throw error;return null;});
+if(!catalog?.tracks?.length)catalog=JSON.parse(await fs.readFile(path.join(root,'lib/seed/catalog.json'),'utf8'));
 if(catalog.tracks.some(track=>track.sourceMatch!=='provider_catalog'))throw Error('O catálogo inicial deve conter somente registros importados das fontes públicas.');
+if(process.argv.includes('--plan')){console.log(JSON.stringify({tracks:catalog.tracks.length,artists:catalog.artists.length}));process.exit(0);}
 for(const track of catalog.tracks)if(providerArtwork(track.cover))track.cover=track.cover.replace('/500x500-','/250x250-');
 for(const artist of catalog.artists)if(!providerArtwork(artist.picture))artist.picture=null;
 const folder=path.join(root,'lib/seed');await fs.mkdir(path.join(folder,'artwork'),{recursive:true});

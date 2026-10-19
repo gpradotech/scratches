@@ -52,4 +52,4 @@ O inicializador foi verificado no Windows. A execução em macOS ainda precisa d
 
 ## Desenvolvimento
 
-O código-fonte está em `app/`. Use `npm ci` e `npm run dev`. Para gerar a distribuição compilada e populada, execute `npm run build:release`. Os dados pessoais permanecem fora do Git.
+O código-fonte está em `app/`. Use `npm ci` e `npm run dev`. Para recuperar as imagens do catálogo público após clonar o código, execute `node --use-system-ca scripts/prepare-catalog-seed.mjs`. Depois gere a distribuição compilada e populada com `npm run build:release`. Os dados pessoais permanecem fora do Git.
