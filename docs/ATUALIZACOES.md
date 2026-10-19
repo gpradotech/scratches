@@ -32,7 +32,9 @@ Pacotes, backups e diário ficam em `.scratches/updates/`. Uma instalação inte
 
 A aplicação atual fica em `app/`, na raiz do código-fonte. A Release v0.1.0 já publicada conserva a estrutura anterior; seus arquivos e hashes não devem ser substituídos. O caminho dos dados pessoais continua em `dados/prototipo-02/workspace.json` para preservar as instalações existentes.
 
-O atualizador incluído na v0.1.0 valida uma lista de caminhos da estrutura anterior e não aceita diretamente pacotes com `app/`. Antes de publicar uma próxima Release com essa estrutura, é necessário validar e documentar a transição, inclusive a preservação do catálogo e a recuperação em caso de falha. A renomeação do código em `main` não anuncia uma atualização aos usuários da v0.1.0.
+O atualizador incluído na v0.1.0 valida uma lista de caminhos da estrutura anterior. A versão 0.2.0 gera um pacote compatível com essa lista, mantendo os caminhos antigos apenas no runtime distribuído. O código-fonte continua em `app/`. O pacote foi validado com o decoder e instalador reais da v0.1.0, incluindo inicialização, restauração e preservação de catálogo e workspace. O ZIP usa `iniciar-app.cmd`; a atualização mantém e atualiza o nome de inicializador permitido pela instalação antiga.
+
+O catálogo inicial público fica em `lib/seed/catalog.json`, com as imagens em `lib/seed/artwork/`. O servidor combina o catálogo inicial com os registros locais por ID, dando preferência aos registros locais e sem regravar o arquivo pessoal. Letras completas, projetos, workspace e caches pessoais continuam fora do pacote. As letras são obtidas automaticamente em cada instalação.
 
 ### Conferência para publicação
 
@@ -43,4 +45,4 @@ O atualizador incluído na v0.1.0 valida uma lista de caminhos da estrutura ante
 5. Só após essa revisão, publicar o código correspondente e criar uma Release em rascunho. Anexar o ZIP, o pacote de atualização e seus arquivos `.sha256`; comparar o digest de cada asset com o hash local. Extrair o ZIP em outra pasta e conferir a primeira abertura sem dependências ou dados de desenvolvimento.
 6. Publicar a Release como estável e latest somente quando os arquivos e testes estiverem completos. Conferir o endpoint público. Um push em `main` não anuncia atualização automática.
 
-O repositório público contém somente o código revisado para distribuição. O histórico de pesquisa e os dados locais de desenvolvimento não são enviados. A primeira distribuição, v0.1.0, abre com catálogo e espaço pessoal vazios; as integrações com APIs continuam em desenvolvimento.
+O repositório público contém o código revisado e o catálogo inicial de metadados públicos autorizado para distribuição. O histórico de pesquisa e os dados pessoais de desenvolvimento não são enviados. A versão 0.1.0 abria vazia; a versão 0.2.0 inclui 951 músicas e capas, preservando o espaço pessoal de cada instalação.

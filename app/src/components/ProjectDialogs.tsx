@@ -1,3 +1,4 @@
+import {TextField} from './FormField.tsx';
 import {Button, TextAction} from './Controls.tsx';
 import {useEffect, useRef, useState} from 'react';
 import {assessFragmentSelection, normalize, saveFragments} from '../domain/model.ts';
@@ -21,7 +22,7 @@ export function SaveDialog({fragments, workspace, commit, onClose, onSaved}: {fr
     } catch (e) {setError(e instanceof Error ? e.message : 'Não foi possível salvar. Tente novamente.');} finally {running.current = false; setPending(false);}
   }
   return <Dialog title="Adicionar a projeto" onClose={onClose} closeDisabled={pending} className="save-project-dialog"><p className="muted">{fragments.length} {fragments.length === 1 ? 'trecho selecionado' : 'trechos selecionados'}. Escolha um projeto para salvar.</p>
-    {workspace.projects.length > 0 && <label className="form-field">Buscar projeto<input ref={searchInput} type="search" value={query} disabled={pending} onChange={event => setQuery(event.target.value)} placeholder="Nome do projeto"/></label>}
+    {workspace.projects.length > 0 && <TextField label="Buscar projeto" ref={searchInput} type="search" value={query} disabled={pending} onChange={event => setQuery(event.target.value)} placeholder="Nome do projeto"/>}
     <div className="project-picker-list" aria-label="Projetos disponíveis">{projects.length ? projects.map(project => {
       const {additions, duplicates} = assessFragmentSelection(project, fragments);
       const alreadySaved = additions.length === 0;
@@ -32,7 +33,7 @@ export function SaveDialog({fragments, workspace, commit, onClose, onSaved}: {fr
       </Button>;
     }) : <p className="project-picker-empty">{workspace.projects.length ? 'Nenhum projeto encontrado. Você pode criar um novo abaixo.' : 'Você ainda não tem projetos. Crie o primeiro para guardar esta seleção.'}</p>}</div>
     <div className="project-picker-create">{creating ? <form onSubmit={event => {event.preventDefault(); void save('', name);}}>
-      <label className="form-field">Nome do novo projeto<input autoFocus maxLength={100} disabled={pending} value={name} onChange={event => setName(event.target.value)} placeholder="Como você quer chamar esta linha?"/></label>
+      <TextField label="Nome do novo projeto" autoFocus maxLength={100} disabled={pending} value={name} onChange={event => setName(event.target.value)} placeholder="Como você quer chamar esta linha?"/>
       <div className="project-create-actions"><TextAction disabled={pending} onClick={() => setCreating(false)}>Cancelar criação</TextAction><Button variant="primary" type="submit" disabled={pending || !name.trim() || !fragments.length}>{pending ? 'Salvando…' : 'Criar e salvar'}</Button></div>
     </form> : <Button className="wide" disabled={pending} onClick={() => {setName(query); setCreating(true);}}><Icon name="plus"/>Novo projeto</Button>}</div>
     {error && <p className="error-text" role="alert">{error}</p>}
@@ -41,5 +42,5 @@ export function SaveDialog({fragments, workspace, commit, onClose, onSaved}: {fr
 }
 export function ProjectNameDialog({project, commit, onClose, notify}: {project?: Project; commit: Commit; onClose: () => void; notify: (message: string) => void}) {
   const [name, setName] = useState(project?.name ?? ''); const [pending, setPending] = useState(false); const [error, setError] = useState('');
-  return <Dialog title={project ? 'Renomear projeto' : 'Novo projeto'} onClose={onClose}><form onSubmit={e => {e.preventDefault(); if (pending || !name.trim()) return; setPending(true); const id = project?.id ?? crypto.randomUUID(); void commit(w => {const now = new Date().toISOString(); return {...w, projects: project ? w.projects.map(p => p.id === id ? {...p, name: name.trim(), updatedAt: now} : p) : [...w.projects, {id, name: name.trim(), createdAt: now, updatedAt: now, fragments: []}]};}).then(() => {notify(project ? 'Projeto renomeado.' : 'Projeto criado.'); onClose(); if (!project) go('/projeto/' + id);}).catch(e => setError(e.message)).finally(() => setPending(false));}}><label className="form-field">Nome do projeto<input autoFocus maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="Nome da sua linha"/></label>{error && <p className="error-text" role="alert">{error}</p>}<div className="dialog-actions"><Button type="button"  onClick={onClose} disabled={pending}>Cancelar</Button><Button variant="primary" type="submit"  disabled={pending || !name.trim()}>{pending ? 'Salvando…' : project ? 'Salvar nome' : 'Criar projeto'}</Button></div></form></Dialog>;
+  return <Dialog title={project ? 'Renomear projeto' : 'Novo projeto'} onClose={onClose}><form onSubmit={e => {e.preventDefault(); if (pending || !name.trim()) return; setPending(true); const id = project?.id ?? crypto.randomUUID(); void commit(w => {const now = new Date().toISOString(); return {...w, projects: project ? w.projects.map(p => p.id === id ? {...p, name: name.trim(), updatedAt: now} : p) : [...w.projects, {id, name: name.trim(), createdAt: now, updatedAt: now, fragments: []}]};}).then(() => {notify(project ? 'Projeto renomeado.' : 'Projeto criado.'); onClose(); if (!project) go('/projeto/' + id);}).catch(e => setError(e.message)).finally(() => setPending(false));}}><TextField label="Nome do projeto" autoFocus maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="Nome da sua linha"/>{error && <p className="error-text" role="alert">{error}</p>}<div className="dialog-actions"><Button type="button"  onClick={onClose} disabled={pending}>Cancelar</Button><Button variant="primary" type="submit"  disabled={pending || !name.trim()}>{pending ? 'Salvando…' : project ? 'Salvar nome' : 'Criar projeto'}</Button></div></form></Dialog>;
 }

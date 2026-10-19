@@ -6,10 +6,11 @@ const root = path.resolve(dir, '..');
 const out = path.join(dir, 'public/catalogo');
 await fs.mkdir(out, {recursive: true});
 const read = async p => JSON.parse(await fs.readFile(path.join(root, p), 'utf8'));
-const source = await read('dados/corpus-inicial-v1/tracks.json').catch(error => {
+// O corpus de pesquisa só entra na aplicação por uma ação explícita.
+const source = process.argv.includes('--development') ? await read('dados/corpus-inicial-v1/tracks.json').catch(error => {
   if (error.code !== 'ENOENT') throw error;
   return null;
-});
+}) : null;
 if (source === null) {
   // Uma cópia pública não depende do corpus privado de desenvolvimento.
   // Se já existir um catálogo nesta instalação, preserve seu conteúdo.

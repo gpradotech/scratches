@@ -1,0 +1,500 @@
+{
+  "description": "Seleção editorial inicial para descoberta, com prioridade ao rap e hip-hop brasileiro. Os grupos orientam a seleção; não são metadados de idioma ou nacionalidade fornecidos pelo serviço.",
+  "artists": [
+    {
+      "name": "Racionais MC's",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Sabotage",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "RZO",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Facção Central",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "MV Bill",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "GOG",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Thaíde",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Negra Li",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Rappin' Hood",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Criolo",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Emicida",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Djonga",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Baco Exu do Blues",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Rincon Sapiência",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "BK",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Froid",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Rashid",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Rael",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Karol Conká",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Tássia Reis",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Flora Matos",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Drik Barbosa",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "MC Soffia",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Preta Rara",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Ebony",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Duquesa",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Tasha & Tracie",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Don L",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Yago Oproprio",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Kyan",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Febem",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "niLL",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Sain",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Mc Marechal",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "ADL",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Sidoka",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Veigh",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Teto",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "WIU",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Matuê",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "L7NNON",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Filipe Ret",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Orochi",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "MC Cabelinho",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Marcelo D2",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Planet Hemp",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Gabriel O Pensador",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "ConeCrewDiretoria",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Sant",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Luccas Carlos",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Black Alien",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Costa Gold",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Haikaiss",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Tribo da Periferia",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Hungria",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Bivolt",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Cynthia Luz",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Xamã",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Borges",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Ogi",
+      "group": "rap-br",
+      "tracks": 12
+    },
+    {
+      "name": "Jorge Ben Jor",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Tim Maia",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Gilberto Gil",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Caetano Veloso",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Milton Nascimento",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Elis Regina",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Gal Costa",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Chico Buarque",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Cartola",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Paulinho da Viola",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Beth Carvalho",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Alcione",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Elza Soares",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Seu Jorge",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Chico Science",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "BaianaSystem",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Chico César",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Céu",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Liniker",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Luedji Luna",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Djavan",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Luiz Gonzaga",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Rita Lee",
+      "group": "br",
+      "tracks": 8
+    },
+    {
+      "name": "Kendrick Lamar",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Nas",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "A Tribe Called Quest",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Wu-Tang Clan",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Lauryn Hill",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "J Dilla",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "MF DOOM",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Missy Elliott",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Erykah Badu",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "The Roots",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "De La Soul",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Public Enemy",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "James Brown",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Stevie Wonder",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Nina Simone",
+      "group": "internacional",
+      "tracks": 8
+    },
+    {
+      "name": "Marvin Gaye",
+      "group": "internacional",
+      "tracks": 8
+    }
+  ]
+}

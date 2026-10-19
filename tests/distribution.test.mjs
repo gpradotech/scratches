@@ -10,7 +10,7 @@ import net from 'node:net';
 import {buildPackage,decodePackage} from '../lib/update-package.mjs';
 import {cleanFixture,fixture,waitFor} from './update-fixtures.mjs';
 
-test('pacote real inicia sem node_modules, sem workspaces e sem catálogo pessoal',async()=>{
+test('pacote real inicia com catálogo público, sem node_modules, workspaces ou dados pessoais',async()=>{
   const source=fileURLToPath(new URL('../',import.meta.url));
   const artifact=await buildPackage(source),root=await fixture('0.1.0',{dependency:null});let child;
   try {
@@ -25,7 +25,10 @@ test('pacote real inicia sem node_modules, sem workspaces e sem catálogo pessoa
     assert.equal(ready.type,'ready');assert.equal(ready.version,artifact.version);
     const url=output.match(/http:\/\/127\.0\.0\.1:\d+/)?.[0];assert.ok(url);
     assert.equal((await fetch(url)).status,200);
-    assert.deepEqual(await(await fetch(url+'/catalogo/catalogo.json')).json(),{tracks:[],artists:[]});
+    assert.equal((await fetch(url+'/api/music/search?q=teste&provider=invalido')).status,400);
+    const publicCatalog=JSON.parse(await fs.readFile(path.join(source,'lib/seed/catalog.json'),'utf8'));
+    assert.deepEqual(await(await fetch(url+'/catalogo/catalogo.json')).json(),publicCatalog);
+    assert.equal(publicCatalog.tracks.length,951);
     assert.equal((await(await fetch(url+'/api/updates')).json()).canInstall,false);
     assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'))).workspaces,undefined);
     assert.equal((await(await fetch(url+'/api/workspace')).json()).revision,1);

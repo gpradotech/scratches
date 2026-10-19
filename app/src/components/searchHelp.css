@@ -1,0 +1,15 @@
+.search-dropdown .command-help{justify-content:space-between;align-items:center;flex-wrap:wrap}
+.command-help .search-help-action{margin-right:auto;flex:none;font-size:12px;white-space:nowrap}
+.command-shortcuts{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:16px}
+.command-shortcuts>span{display:flex;align-items:center;gap:8px}
+.search-help-dialog{width:min(760px,calc(100% - 32px));text-align:left;font-size:16px}
+.search-help-dialog p{margin-bottom:24px}
+.search-operator-list{margin:0;display:grid;gap:16px}
+.search-operator-list>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.search-operator-list dt,.search-operator-list dd{margin:0;line-height:1.6;font-size:14px}
+.search-operator-list dd{color:var(--muted)}
+.search-help-dialog code{overflow-wrap:anywhere;color:var(--soft)}
+.search-help-example{display:grid;gap:8px;padding:16px;background:#121821;border-radius:8px;font-size:14px}
+.search-help-dialog .caption{margin-top:24px}
+.search-query-error{padding:16px;margin:0;color:var(--soft)}
+@media(max-width:600px){.command-shortcuts{gap:8px}.search-operator-list>div{grid-template-columns:1fr;gap:8px}}

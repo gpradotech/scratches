@@ -3,6 +3,7 @@ import type {Catalog, ReleaseType, Track} from './model.ts';
 // A identidade usa o álbum informado no catálogo e seu artista principal.
 // Participações variam entre faixas e não devem dividir um mesmo álbum.
 export function albumId(track: Track): string {
+  if (track.albumId?.startsWith('local-album:')) return track.albumId;
   return JSON.stringify([track.artists[0]?.id ?? '', track.album.normalize('NFC').trim().toLocaleLowerCase('pt-BR')]);
 }
 
@@ -18,7 +19,7 @@ export function findAlbum(catalog: Catalog, id: string) {
   const types = tracks.filter(track => track.catalogAlbum?.normalize('NFC').trim().toLocaleLowerCase('pt-BR') === track.album.normalize('NFC').trim().toLocaleLowerCase('pt-BR'))
     .map(track => track.releaseType).filter((type): type is ReleaseType => !!type && ['album', 'single', 'ep', 'compilation'].includes(type));
   const releaseType = new Set(types).size === 1 ? types[0] : null;
-  return {id, title: tracks[0].album, artist: tracks[0].artists[0], tracks, coverTrack, releaseDate, releaseType,
+  return {id, title: tracks[0].album || 'Álbum não informado', artist: tracks[0].artists[0], tracks, coverTrack, releaseDate, releaseType,
     duration: tracks.reduce((total, track) => total + track.duration, 0)};
 }
 export type CatalogAlbum = NonNullable<ReturnType<typeof findAlbum>>;

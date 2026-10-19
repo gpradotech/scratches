@@ -1,5 +1,5 @@
 import {useId, useMemo, useRef} from 'react';
-import type {Catalog} from '../domain/model.ts';
+import type {Artist, Catalog} from '../domain/model.ts';
 import {duration, normalize} from '../domain/model.ts';
 import {artistAlbums, albumSortFromParams, albumSortParams, albumSortLabels, nextAlbumSort, sortAlbums, filterAlbums, releaseFilters, releaseFilterFromParams, releaseFilterParams, releaseTypeLabels} from '../domain/albums.ts';
 import type {CatalogAlbum} from '../domain/albums.ts';
@@ -21,7 +21,7 @@ function AlbumFacts({album, artistId}: {album: CatalogAlbum; artistId: string}) 
     {album.artist?.id !== artistId && <p className="caption album-participation">Participação · {album.artist?.name}</p>}</>;
 }
 
-function AlbumTrackSection({album, artistId, params, onParamsChange}: {album: CatalogAlbum; artistId: string; params: URLSearchParams; onParamsChange: (params: URLSearchParams) => void}) {
+function AlbumTrackSection({album, artistProfiles, artistId, params, onParamsChange}: {album: CatalogAlbum; artistProfiles: readonly Artist[]; artistId: string; params: URLSearchParams; onParamsChange: (params: URLSearchParams) => void}) {
   const heading = useRef<HTMLHeadingElement>(null);
   const headingId = useId();
   return <section className="artist-album-section" aria-labelledby={headingId}>
@@ -31,7 +31,7 @@ function AlbumTrackSection({album, artistId, params, onParamsChange}: {album: Ca
         <TextLink className="inline-icon-link artist-album-open" size="sm" href={albumHref(album)}>{album.releaseType === 'album' ? 'Ver álbum' : 'Ver lançamento'} <Icon name="arrow" size={16}/></TextLink>
       </div>
     </header>
-    <TrackList tracks={album.tracks} params={params} headingRef={heading} onParamsChange={onParamsChange} fixedView="list" showViewControls={false} paginate={false} compact/>
+    <TrackList tracks={album.tracks} artistProfiles={artistProfiles} params={params} headingRef={heading} onParamsChange={onParamsChange} fixedView="list" showViewControls={false} paginate={false} compact/>
   </section>;
 }
 
@@ -67,7 +67,7 @@ export function ArtistDiscography({catalog, artistId, params}: {catalog: Catalog
       {view === 'gallery' ? <div ref={gridRef} className="track-gallery artist-album-gallery">{visible.map(album => <article key={album.id} className="track-gallery-card track-item track-surface artist-album-card">
         <AlbumCover album={album}/><TextLink underline={false} className="track-title" title={album.title} href={albumHref(album)}><span className="track-title-text">{album.title}</span></TextLink>
         <AlbumFacts album={album} artistId={artistId}/>
-      </article>)}</div> : <div className="artist-albums-list">{visible.map(album => <AlbumTrackSection key={album.id} album={album} artistId={artistId} params={params} onParamsChange={changeTracks}/>)}</div>}
+      </article>)}</div> : <div className="artist-albums-list">{visible.map(album => <AlbumTrackSection key={album.id} album={album} artistProfiles={catalog.artists} artistId={artistId} params={params} onParamsChange={changeTracks}/>)}</div>}
       <Pagination key={`${paging.page}-${paging.pageSize}-${paging.total}`} kind="releases" state={paging} pageSizeOptions={pageSizeOptions} onChange={(page, size) => {if (page === paging.page && size === paging.pageSize) return; focusAlbums.current = true; change(pageParams(page, size));}}/>
     </>}
   </section>;

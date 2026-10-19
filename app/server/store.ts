@@ -16,12 +16,18 @@ export class WorkspaceStore {
     catch (e) {if ((e as NodeJS.ErrnoException).code === 'ENOENT') return emptyWorkspace(); throw e;}
   }
   save(value: unknown): Promise<Workspace> {
+    return this.update(current => {
+      validateWorkspace(value);
+      if (value.revision !== current.revision) throw new Conflict('O espaço foi alterado em outra janela. Atualize antes de tentar novamente.');
+      return value;
+    });
+  }
+  update(change: (current: Workspace) => Workspace): Promise<Workspace> {
     if (this.blocked) return Promise.reject(new Error('O Scratches está reiniciando para atualizar. Aguarde um instante.'));
     this.pending++;
     const operation = this.tail.catch(() => {}).then(async () => {
-      validateWorkspace(value);
       const current = await this.read();
-      if (value.revision !== current.revision) throw new Conflict('O espaço foi alterado em outra janela. Atualize antes de tentar novamente.');
+      const value = change(current); validateWorkspace(value);
       const next = {...value, revision: current.revision + 1};
       await fs.mkdir(path.dirname(this.file), {recursive: true});
       const temporary = this.file + '.pending';

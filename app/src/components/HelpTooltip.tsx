@@ -49,7 +49,7 @@ export function HelpTooltip({label, text}: {label: string; text: string}) {
     <IconButton variant="plain" ref={trigger} type="button" className="help-tooltip-trigger" aria-label={'Sobre ' + label} aria-describedby={open ? id : undefined}
       onFocus={show} onBlur={() => {cancelClose(); setOpen(false); setPinned(false);}}
       onPointerEnter={event => {if (event.pointerType === 'mouse') show();}} onPointerLeave={leave}
-      onClick={() => {cancelClose(); setOpen(!pinned); setPinned(!pinned);}}><Icon name="info" size={17}/></IconButton>
+      onClick={() => {cancelClose(); setOpen(!pinned); setPinned(!pinned);}}><Icon name="info" size={16}/></IconButton>
     {open && createPortal(<span id={id} ref={tooltip} className="help-tooltip" role="tooltip" style={position}
       onPointerEnter={cancelClose} onPointerLeave={leave}>{text}</span>, trigger.current?.closest('dialog') ?? document.body)}
   </>;

@@ -6,18 +6,19 @@ import type {SearchDock} from '../domain/searchDock.ts';
 import type {Catalog, Workspace} from '../domain/model.ts';
 import {normalize} from '../domain/model.ts';
 import {filtersFromParams, searchAll} from '../domain/search.ts';
+import {parseSearchQuery} from '../domain/searchQuery.ts';
 import {artistUrl, go, routeUrl, trackUrl} from '../routing.ts';
 import type {SearchHistoryEntry} from '../domain/searchHistory.ts';
 import {Icon} from './UI.tsx';
+import {SearchHelp} from './SearchHelp.tsx';
+import {Artwork} from './Artwork.tsx';
 
 interface SearchMedia {kind: 'artist' | 'track'; src: string | null; label: string}
 interface SearchOption extends SearchHistoryEntry {media?: SearchMedia; execute: () => void}
 
 function SuggestionArtwork({media}: {media: SearchMedia}) {
-  const [failed, setFailed] = useState(false);
   return <span className={'command-media command-media-' + media.kind} aria-hidden="true">
-    {media.src && !failed ? <img src={media.src} alt="" onError={() => setFailed(true)}/>
-      : media.kind === 'artist' ? media.label.slice(0, 1) : '?'}
+    <Artwork source={media.src} alt="" fallback={media.kind === 'artist' ? media.label.slice(0, 1) : '?'}/>
   </span>;
 }
 
@@ -30,6 +31,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
   const [query, setQuery] = useState(initial);
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [availableHeight, setAvailableHeight] = useState(360);
   const input = useRef<HTMLInputElement>(null);
   const module = useRef<HTMLDivElement>(null);
@@ -39,6 +41,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
   const list = useRef<HTMLDivElement>(null);
   const id = useId();
   const optionsId = id + '-options';
+  const queryInfo = useMemo(() => parseSearchQuery(query), [query]);
 
   useEffect(() => {setQuery(initial); setActive(0);}, [initial]);
 
@@ -102,6 +105,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
 
   const results = useMemo<SearchOption[]>(() => {
     if (!normalize(query)) return recent.map(r => ({...r, media: mediaByUrl.get(r.url.split('?')[0]), execute: () => {location.hash = r.url;}}));
+    if (queryInfo.error) return [];
     const params = new URLSearchParams(searchParams);
     const found = searchAll(catalog, query, filtersFromParams(params), workspace);
     const submitResult = {
@@ -115,7 +119,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
       return {label: p.track.title + ' · ' + (p.text.length > 100 ? p.text.slice(0, 100) + '…' : p.text), type: 'Trecho · ' + p.track.artists[0].name, url, media: mediaByUrl.get(trackUrl(p.track.id)), execute: () => {location.hash = url;}};
     });
     return [submitResult, ...artists, ...tracks, ...passages];
-  }, [catalog, workspace, query, recent, searchParams, mediaByUrl, submit]);
+  }, [catalog, workspace, query, queryInfo, recent, searchParams, mediaByUrl, submit]);
 
   const activeIndex = Math.min(active, results.length - 1);
   const showingHistory = !normalize(query);
@@ -136,12 +140,13 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
     requestAnimationFrame(() => list.current?.querySelectorAll('[data-search-option]')[next]?.scrollIntoView({block: 'nearest'}));
   }
 
-  return <><div className={'search-slot' + (dock ? ' is-docked' : '')} ref={slot}/>{createPortal(<div className={'search-module' + (dock ? ' search-module-docked' : '')} style={placement ? {left:placement.left,top:placement.top,width:placement.width,position:dock ? 'fixed' : 'absolute'} : {visibility:'hidden'}} ref={module} onBlur={e => {
+  return <>{helpOpen && <SearchHelp onClose={() => {setHelpOpen(false); requestAnimationFrame(() => input.current?.focus());}}/>}<div className={'search-slot' + (dock ? ' is-docked' : '')} ref={slot}/>{createPortal(<div className={'search-module' + (dock ? ' search-module-docked' : '')} style={placement ? {left:placement.left,top:placement.top,width:placement.width,position:dock ? 'fixed' : 'absolute'} : {visibility:'hidden'}} ref={module} onBlur={e => {
     if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false);
   }}>
     <div className={'search-opener search-field' + (open ? ' is-open' : '')} onClick={() => {input.current?.focus(); showSuggestions();}}>
       <Icon name="search" size={26}/>
       <input ref={input} aria-label="Pesquisar músicas, artistas ou fragmentos" role="combobox"
+        aria-invalid={!!queryInfo.error} aria-describedby={open && queryInfo.error ? id + '-error' : undefined}
         aria-expanded={open} aria-haspopup={showingHistory ? 'grid' : 'listbox'} aria-controls={open ? optionsId : undefined}
         aria-autocomplete="list" aria-activedescendant={open && activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined}
         placeholder="Buscar músicas, artistas ou fragmentos" value={query}
@@ -163,6 +168,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
       </div> : <kbd>Ctrl + K</kbd>}
     </div>
     {open && <section className="search-dropdown" aria-label="Sugestões da pesquisa">
+      {queryInfo.error && <p id={id + '-error'} className="search-query-error" role="status">{queryInfo.error}</p>}
       {showingHistory && <div className="command-history-heading"><p className="command-label">Histórico de pesquisas</p>{recent.length > 0 && <TextAction type="button" className="text-button" aria-label="Limpar histórico de pesquisas" onMouseDown={e => e.preventDefault()} onClick={() => {onClearRecent(); setActive(0); input.current?.focus();}}>Limpar histórico</TextAction>}</div>}
       <div id={optionsId} ref={list} role={showingHistory ? 'grid' : 'listbox'} tabIndex={-1} aria-label={showingHistory ? 'Histórico de pesquisas' : 'Resultados da pesquisa'} className="command-list" style={{maxHeight: availableHeight}}>
         {results.map((r, i) => {
@@ -180,7 +186,7 @@ export function Search({catalog, workspace, initial, recent, searchParams, focus
         })}
       </div>
       {showingHistory && !recent.length && <p className="command-history-empty" role="status">Suas pesquisas recentes aparecerão aqui.</p>}
-      <div className="command-help">{results.length > 0 && <><span><kbd aria-label="Seta para cima"><Icon name="arrow-up" size={12}/></kbd><kbd aria-label="Seta para baixo"><Icon name="arrow-down" size={12}/></kbd> navegar</span><span><kbd>Enter</kbd> abrir</span></>}<span><kbd>Esc</kbd> recolher</span></div>
+      <div className="command-help"><TextAction tone="accent" className="search-help-action" onClick={() => {setHelpOpen(true); setOpen(false);}}>Pesquisa avançada</TextAction><div className="command-shortcuts">{results.length > 0 && <><span><kbd aria-label="Seta para cima"><Icon name="arrow-up" size={12}/></kbd><kbd aria-label="Seta para baixo"><Icon name="arrow-down" size={12}/></kbd> navegar</span><span><kbd>Enter</kbd> abrir</span></>}<span><kbd>Esc</kbd> recolher</span></div></div>
     </section>}
   </div>,document.body)}</>;
 }

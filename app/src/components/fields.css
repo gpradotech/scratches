@@ -1,0 +1,22 @@
+:root{--field-height:48px;--field-label-height:24px;--field-inline-space:16px;--field-label-gap:8px}
+.ui-field{display:flex;flex-direction:column;gap:var(--field-label-gap);min-width:0;width:100%;margin:0;align-self:start;font-size:13px}
+.ui-field>.ui-field__label-row{display:flex;align-items:center;gap:8px;height:var(--field-label-height);min-height:var(--field-label-height);margin:0}
+.ui-field>.ui-field__label-row>label{font-size:13px;font-weight:500;line-height:var(--field-label-height);margin:0;min-width:0}
+.ui-field>.ui-input,.filter-grid .ui-input{display:block;box-sizing:border-box;width:100%;height:var(--field-height);min-height:var(--field-height);margin:0;padding:8px var(--field-inline-space);font-size:15px;line-height:24px;border:1px solid #354255;border-radius:6px;background:#121821}
+.bpm-field{align-self:start}
+.bpm-field legend{height:var(--field-label-height);line-height:var(--field-label-height)}
+.bpm-field .ui-input{width:50%}
+.filter-grid .more-filters{height:var(--field-height)}
+.ui-field>.language-select{width:100%;margin:0;font-size:15px;line-height:24px}
+.ui-field .language-select__control{box-sizing:border-box;height:var(--field-height);min-height:var(--field-height);max-height:var(--field-height);margin:0;padding:0;border:1px solid #354255;border-radius:6px;background:#121821;align-items:center}
+.ui-field .language-select__value-container{position:relative;box-sizing:border-box;display:flex;align-items:center;flex-wrap:nowrap;gap:8px;height:46px;min-height:0;padding:0 var(--field-inline-space);overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.ui-field .language-select__input-container{flex:1 0 32px;min-width:32px;margin:0;padding:0;line-height:24px}
+.ui-field .language-select__input-container input{height:24px;min-height:0;line-height:24px;margin:0;padding:0;font-size:15px}
+.ui-field .language-select__placeholder,.ui-field .language-select__single-value{margin:0;padding:0;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ui-field .language-select__placeholder,.ui-field .language-select__single-value{position:absolute;left:var(--field-inline-space);right:var(--field-inline-space);pointer-events:none}
+.ui-field .language-select__indicators{align-self:stretch;align-items:center;flex:none}
+.ui-field .language-select__indicator{padding:8px}
+.ui-field .language-select__multi-value{flex:none;max-width:260px;margin:0;min-height:32px;line-height:24px}
+.ui-field .language-select__multi-value__label{padding:0 8px;line-height:32px}
+.ui-field .language-select__multi-value__remove{padding:0 8px}
+.ui-field .language-select__control--is-focused{border-color:var(--soft)}

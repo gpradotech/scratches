@@ -10,4 +10,5 @@ import './components/trackGallery.css';
 import './components/trackArtists.css';
 import './components/filterToggles.css';
 import './components/artistDiscography.css';
+import './components/fields.css';
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

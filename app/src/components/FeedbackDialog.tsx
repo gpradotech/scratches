@@ -1,3 +1,4 @@
+import {TextField} from './FormField.tsx';
 import {useEffect, useId, useRef, useState} from 'react';
 import {Button} from './Controls.tsx';
 import {Dialog} from './UI.tsx';
@@ -48,7 +49,7 @@ export function FeedbackDialog({draft, onChange, onClose, onSent}: {draft: Feedb
         onChange={([kind]) => {if (kind) change('kind', kind);}}/>
       <label htmlFor={id + '-message'}>Mensagem<textarea id={id + '-message'} rows={5} required minLength={10} maxLength={4000} value={draft.message} disabled={pending} aria-describedby={id + '-message-help'} onChange={event => change('message', event.target.value)} placeholder="Conte o que aconteceu ou o que você gostaria de melhorar."/></label>
       <p id={id + '-message-help'} className="caption feedback-field-help">De 10 a 4.000 caracteres. Para relatar um problema, descreva os passos e o resultado esperado.</p>
-      <label htmlFor={id + '-email'}>Seu e-mail <span className="muted">(opcional)</span><input id={id + '-email'} type="email" autoComplete="email" maxLength={254} value={draft.email} disabled={pending} aria-describedby={id + '-email-help'} onChange={event => change('email', event.target.value)}/></label>
+      <TextField label={<>Seu e-mail <span className="muted">(opcional)</span></>} id={id + '-email'} type="email" autoComplete="email" maxLength={254} value={draft.email} disabled={pending} aria-describedby={id + '-email-help'} onChange={event => change('email', event.target.value)}/>
       <p id={id + '-email-help'} className="caption feedback-field-help">Informe apenas se quiser receber uma resposta.</p>
       <p className="caption feedback-privacy">Somente o que você preencher neste formulário será enviado. Seus projetos, letras e arquivos não acompanham a mensagem.</p>
       {error && <p role="alert" className="error-text">{error}</p>}

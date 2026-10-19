@@ -1,9 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {customLanguage, loadLanguageCatalog, searchLanguages, suggestLanguages} from './languages.ts';
+import {allLanguageOptions, customLanguage, loadLanguageCatalog, searchLanguages, suggestLanguages} from './languages.ts';
 import {emptyWorkspace, validateWorkspace} from './model.ts';
 
 test('catálogo internacional permite encontrar idiomas por nome traduzido, inglês ou código', async () => {
+  assert.equal(suggestLanguages([], [], [])[0].label, 'Português');
+  assert.equal(suggestLanguages([], [], []).length, 12);
   const catalog = await loadLanguageCatalog();
   assert.ok(catalog.length > 7000);
   for (const [query, code] of [['frances', 'fra'], ['Japanese', 'jpn'], ['yor', 'yor'], ['Nheengatu', 'yrl']]) {
@@ -12,6 +14,9 @@ test('catálogo internacional permite encontrar idiomas por nome traduzido, ingl
   const portuguese = searchLanguages(catalog, 'por', [], []).find(option => option.codes.includes('por'))!;
   assert.equal(customLanguage('Português').value, portuguese.value);
   assert.equal(searchLanguages(catalog, 'portugues', [], ['Português']).some(option => option.value === portuguese.value), true);
+  const all = allLanguageOptions(catalog, ['Idioma criado pelo usuário'], []);
+  assert.ok(catalog.every(option => all.some(item => item.value === option.value)));
+  assert.equal(all[0].label, 'Idioma criado pelo usuário');
 });
 
 test('nomes locais continuam selecionáveis e não há limite fixo de idiomas no backup', async () => {

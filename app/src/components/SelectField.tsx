@@ -1,10 +1,11 @@
+import {FormField} from './FormField.tsx';
 import {IconButton} from './Controls.tsx';
 import {useId, useLayoutEffect, useRef, useState} from 'react';
 import Select from 'react-select';
-import type {ClearIndicatorProps, MultiValueProps} from 'react-select';
+import type {MultiValueProps} from 'react-select';
 import {Icon} from './UI.tsx';
 import {HelpTooltip} from './HelpTooltip.tsx';
-import {CheckedSelectOption, SelectDropdownIndicator} from './CheckedSelectOption.tsx';
+import {CheckedSelectOption, SelectClearIndicator, SelectDropdownIndicator} from './CheckedSelectOption.tsx';
 
 interface Option<Value extends string = string> {value: Value; label: string}
 function SelectionCount<Value extends string>(props: MultiValueProps<Option<Value>, boolean>) {
@@ -17,34 +18,29 @@ function SelectionCount<Value extends string>(props: MultiValueProps<Option<Valu
       onClick={event => {event.stopPropagation(); props.clearValue(); document.getElementById(props.selectProps.inputId ?? '')?.focus();}}><Icon name="close" size={13}/></IconButton>
   </span>;
 }
-function ClearSelection<Value extends string>(props: ClearIndicatorProps<Option<Value>, boolean>) {
-  return <IconButton variant="plain" type="button" className="language-select__clear-indicator" aria-label={'Limpar filtro ' + props.selectProps['aria-label']}
-    onMouseDown={event => {event.preventDefault(); event.stopPropagation();}}
-    onClick={event => {event.stopPropagation(); props.clearValue(); document.getElementById(props.selectProps.inputId ?? '')?.focus();}}><Icon name="close" size={17}/></IconButton>;
-}
-export function SelectField<Value extends string>({label, value, options, onChange, help, multiple = true, clearable = !multiple, searchable = true, disabled = false}: {
+export function SelectField<Value extends string>({label, value, options, onChange, help, multiple = true, clearable = !multiple, searchable = true, disabled = false, placeholder = 'Qualquer'}: {
   label: string; value: Value[]; options: readonly Option<Value>[]; onChange: (values: Value[]) => void;
-  help?: string; multiple?: boolean; clearable?: boolean; searchable?: boolean; disabled?: boolean;
+  help?: string; multiple?: boolean; clearable?: boolean; searchable?: boolean; disabled?: boolean; placeholder?: string;
 }) {
+  const choices = options.filter(option => option.value !== '');
   const id = useId();
   const container = useRef<HTMLDivElement>(null);
   const [portal, setPortal] = useState<HTMLElement | null>(null);
   useLayoutEffect(() => {setPortal(container.current?.closest('dialog') ?? document.body);}, []);
-  return <div className="filter-select-field" ref={container}>
-    <div className="filter-label-help"><label htmlFor={id}>{label}</label>{help && <HelpTooltip label={label} text={help}/>}</div>
+  return <FormField id={id} label={label} help={help && <HelpTooltip label={label} text={help}/>} className="filter-select-field" ref={container}>
     <Select<Option<Value>, boolean> inputId={id} instanceId={id} aria-label={label} isMulti={multiple} isClearable={clearable} isSearchable={searchable} isDisabled={disabled} unstyled
-      className="language-select filter-select" classNamePrefix="language-select" options={options}
-      value={multiple ? value.map(item => options.find(option => option.value === item) ?? {value: item, label: item}) : options.find(option => option.value === value[0]) ?? null}
+      className="language-select filter-select" classNamePrefix="language-select" options={choices}
+      value={multiple ? value.map(item => choices.find(option => option.value === item) ?? {value: item, label: item}) : choices.find(option => option.value === value[0]) ?? null}
       onChange={items => onChange(!items ? [] : 'value' in items ? [items.value] : items.map(item => item.value))}
-      placeholder="Qualquer" noOptionsMessage={() => 'Nenhuma opção encontrada.'}
+      placeholder={placeholder} noOptionsMessage={() => 'Nenhuma opção encontrada.'}
       closeMenuOnSelect={!multiple} hideSelectedOptions={false} tabSelectsValue={false}
       menuPlacement="auto" menuPosition="fixed" menuPortalTarget={portal ?? undefined} maxMenuHeight={230} menuShouldScrollIntoView={false}
       styles={{menuPortal: base => ({...base, zIndex: 40})}}
-      components={{DropdownIndicator: SelectDropdownIndicator, Option: CheckedSelectOption, MultiValue: SelectionCount, ClearIndicator: ClearSelection, IndicatorSeparator: null}}
+      components={{DropdownIndicator: SelectDropdownIndicator, Option: CheckedSelectOption, MultiValue: SelectionCount, ClearIndicator: SelectClearIndicator, IndicatorSeparator: null}}
       ariaLiveMessages={{
         guidance: () => multiple ? 'Digite para pesquisar. Use as setas e Enter para selecionar várias opções. Backspace remove a última seleção. Escape recolhe as opções.' : `Use as setas e Enter para escolher uma opção. Uma nova escolha substitui a anterior. ${clearable ? 'Backspace limpa a seleção. ' : ''}Escape recolhe as opções.`,
         onChange: ({label: option, action}) => action === 'clear' ? 'Filtro limpo.' : action === 'remove-value' || action === 'pop-value' || action === 'deselect-option' ? `${option} removido.` : `${option} selecionado.`,
         onFocus: ({label: option}) => option,
       }} screenReaderStatus={({count}) => `${count} opções disponíveis.`}/>
-  </div>;
+  </FormField>;
 }

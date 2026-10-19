@@ -31,7 +31,7 @@ export function sortTracks(tracks: Track[], sort: TrackSort): Track[] {
   if (!sort) return [...tracks];
   const numeric = sort.key === 'sequence' || sort.key === 'duration' || sort.key === 'bpm';
   const value = (track: Track, index: number) => sort.key === 'sequence' ? index : sort.key === 'duration' ? track.duration : sort.key === 'artist' ? track.artists.map(artist => artist.name).join(', ') : track[sort.key];
-  const missing = (value: string | number | null) => numeric ? !Number.isFinite(value) || Number(value) < 0 : typeof value !== 'string' || !value.trim();
+  const missing = (value: string | number | null) => numeric ? !Number.isFinite(value) || Number(value) < 0 || (sort.key === 'duration' && value === 0) : typeof value !== 'string' || !value.trim();
   const direction = sort.direction === 'asc' ? 1 : -1;
   return tracks.map((track, index) => ({track, index, value: value(track, index)})).sort((a, b) => {
     const am = missing(a.value), bm = missing(b.value);

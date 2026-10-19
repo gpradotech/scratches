@@ -16,11 +16,15 @@ O pacote inclui a interface compilada e o servidor local; não exige instalar de
 
 ## Dados e backups
 
-Seus projetos e letras ficam em `dados/prototipo-02/workspace.json`. Use **Espaço local → Exportar backup** para guardar uma cópia. A restauração substitui os dados atuais.
+Suas músicas adicionadas ou editadas, projetos e letras ficam em `dados/prototipo-02/workspace.json`. Use **Espaço local → Exportar backup** para guardar uma cópia. A restauração substitui os dados atuais.
 
-O catálogo é separado do código e preservado durante atualizações. Uma instalação sem catálogo abre com uma coleção vazia. As integrações com APIs serão disponibilizadas em versões futuras, conforme forem concluídas e revisadas.
+O acervo local é preservado durante atualizações. A versão 0.2.0 inclui um catálogo inicial de 951 músicas, com prioridade para rap e hip-hop brasileiro, além de outros gêneros e repertório internacional. As capas estão incluídas no download e carregam sem depender da conexão com o Deezer.
 
-Esta distribuição começa sem músicas, artistas, capas, letras e projetos de desenvolvimento. Ainda não há cadastro de músicas pela interface nem pesquisa automática em um catálogo externo. Adicionar letras e selecionar trechos dependem de músicas de um catálogo fornecido separadamente. A primeira abertura vazia é o comportamento esperado.
+Seus projetos e dados pessoais não acompanham a distribuição. As letras são obtidas automaticamente pelo LRCLIB em cada instalação, conforme disponibilidade, e indexadas localmente; os textos completos não são redistribuídos no pacote. A primeira sincronização precisa de internet e a cobertura pode ser parcial.
+
+Em **Explorar → Adicionar música**, busque o título e o artista, escolha uma versão e confira os metadados antes de salvar. A consulta tenta Deezer e Apple (iTunes). Se necessário, use **Preencher manualmente**. Metadados importados são protegidos; informações faltantes podem ser complementadas e ficam identificadas como registros manuais.
+
+O link **Pesquisa avançada**, à esquerda do rodapé da caixa de busca, explica aspas, AND, OR, exclusões e os campos intitle:, inlyric:, album: e artist:.
 
 ## Atualizações
 
@@ -38,6 +42,6 @@ Use **Enviar feedback** no rodapé da aplicação ou abra uma [issue no GitHub](
 - Extraia o ZIP inteiro; abrir o inicializador dentro do arquivo compactado não instala a aplicação.
 - Se o endereço não abrir, confira se o terminal continua aberto e se outra instância já está usando a porta 5174. Não apague os dados para liberar uma porta.
 - Use uma pasta com permissão de escrita, pois os dados são salvos ao lado da aplicação.
-- Os arquivos **Source code** do GitHub exigem `npm ci` e `npm run build`. O ZIP `scratches-0.1.0.zip` já inclui a interface compilada.
+- Os arquivos **Source code** do GitHub exigem `npm ci` e `npm run build`. O ZIP `scratches-0.2.0.zip` já inclui a interface compilada e o catálogo inicial.
 
 O inicializador foi verificado no Windows. A execução em macOS ainda precisa de validação em um Mac real.

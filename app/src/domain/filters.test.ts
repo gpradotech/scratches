@@ -15,9 +15,19 @@ const local: Lyric = {trackId: 'a', text: 'Texto técnico de teste', revision: '
 const workspace = {...emptyWorkspace(), lyrics: {a: local, b: {...local, trackId: 'b', languages: ['Espanhol']}}};
 const ids = (filters: Filters) => searchAll(catalog, 'teste', filters, workspace).tracks.map(track => track.id);
 
+test('descoberta mantém a ordem editorial e continua encontrando repertório de outros gêneros', () => {
+  const preferred = {...first, title: 'Zigue-zague'};
+  const other = {...second, title: 'Amor'};
+  const curated = {tracks: [preferred, other], artists: []};
+  assert.deepEqual(searchAll(curated, '', emptyFilters, emptyWorkspace()).tracks.map(track => track.id), ['a', 'b']);
+  assert.deepEqual(searchAll(curated, 'amor', emptyFilters, emptyWorkspace()).tracks.map(track => track.id), ['b']);
+  assert.deepEqual(searchAll(curated, '', {...emptyFilters, genre: ['Pop']}, emptyWorkspace()).tracks.map(track => track.id), ['b']);
+  assert.deepEqual(curated.tracks.map(track => track.id), ['a', 'b']);
+});
+
 test('checkboxes são filtros ativos sem alterar o modo do cabeçalho ao marcar ou desmarcar', () => {
   assert.equal(hasFieldFilters(emptyFilters), false);
-  for (const flags of [{hasAttributes: true}, {hasLyrics: true}, {hasAttributes: true, hasLyrics: true}]) {
+  for (const flags of [{hasBpm: true}, {hasTonality: true}, {hasLyrics: true}, {hasBpm: true, hasTonality: true, hasLyrics: true}]) {
     const filters = {...emptyFilters, ...flags};
     assert.equal(hasFilters(filters), true);
     assert.equal(hasFieldFilters(filters), false);
@@ -45,13 +55,13 @@ test('estado neutro inclui atributos ausentes e cada seleção exige correspond�
   assert.deepEqual(ids(emptyFilters), ['a', 'b', 'c']);
   assert.equal(hasFilters(emptyFilters), false);
   assert.equal(hasFilters({...emptyFilters, key: ['0']}), true);
-  assert.equal(hasFilters({...emptyFilters, hasAttributes: true}), true);
+  assert.equal(hasFilters({...emptyFilters, hasBpm: true, hasTonality: true}), true);
   assert.equal(hasFilters({...emptyFilters, hasLyrics: true}), true);
   assert.equal(hasFilters(filtersFromParams(filtersToParams(emptyFilters))), false);
 });
 
 test('URL preserva todas as seleções, a consulta, nomes com vírgula e links antigos de uma opção', () => {
-  const filters: Filters = {...emptyFilters, key: ['0', '2'], mode: ['minor'], genre: ['Rap, Funk', 'Pop'], language: ['Português', 'Inglês'], artist: ['A', 'B'], bpmMin: '88.5', hasAttributes: true, hasLyrics: true};
+  const filters: Filters = {...emptyFilters, key: ['0', '2'], mode: ['minor'], genre: ['Rap, Funk', 'Pop'], language: ['Português', 'Inglês'], artist: ['A', 'B'], bpmMin: '88.5', hasBpm: true, hasTonality: true, hasLyrics: true};
   const params = filtersToParams(filters, new URLSearchParams('q=teste&modo=trechos&genre=antigo&unknown=1&pagina=3&visualizacao=galeria&ordenar=title-desc'));
   assert.deepEqual(params.getAll('genre'), ['Rap, Funk', 'Pop']);
   assert.equal(params.get('q'), 'teste'); assert.equal(params.has('modo'), false);
@@ -83,23 +93,35 @@ test('checkboxes funcionam sozinhos, em conjunto e com os demais filtros na busc
   const mixed = {...emptyWorkspace(), lyrics: {a: local, c: {...local, trackId: 'c'}}};
   const tracks = (filters: Filters) => searchAll(catalog, 'teste', filters, mixed).tracks.map(track => track.id);
   assert.deepEqual(tracks(emptyFilters), ['a', 'b', 'c']);
-  assert.deepEqual(tracks({...emptyFilters, hasAttributes: true}), ['a', 'b']);
+  assert.deepEqual(tracks({...emptyFilters, hasBpm: true, hasTonality: true}), ['a', 'b']);
   assert.deepEqual(tracks({...emptyFilters, hasLyrics: true}), ['a', 'c']);
-  assert.deepEqual(tracks({...emptyFilters, hasAttributes: true, hasLyrics: true}), ['a']);
-  assert.deepEqual(tracks({...emptyFilters, hasAttributes: true, hasLyrics: true, bpmMin: '100'}), []);
+  assert.deepEqual(tracks({...emptyFilters, hasBpm: true, hasTonality: true, hasLyrics: true}), ['a']);
+  assert.deepEqual(tracks({...emptyFilters, hasBpm: true, hasTonality: true, hasLyrics: true, bpmMin: '100'}), []);
   assert.deepEqual(tracks({...emptyFilters, hasLyrics: true, genre: ['Rap']}), ['a']);
   const passages = (filters: Filters) => searchAll(catalog, 'técnico', filters, mixed).passages.map(p => p.track.id);
   assert.deepEqual(passages({...emptyFilters, hasLyrics: true}), ['a', 'c']);
-  assert.deepEqual(passages({...emptyFilters, hasLyrics: true, hasAttributes: true}), ['a']);
+  assert.deepEqual(passages({...emptyFilters, hasLyrics: true, hasBpm: true, hasTonality: true}), ['a']);
 });
 
-test('BPM e tonalidade exigem os três dados e não exigem gênero ou atributos da letra', () => {
+test('BPM e tonalidade filtram de forma independente e combinam por E, inclusive nos trechos', () => {
   const candidates: Track[] = [
     {...first, id: 'valid', key: 0, genres: []},
     {...first, id: 'no-bpm', bpm: null}, {...first, id: 'no-key', key: null}, {...first, id: 'no-mode', mode: null},
+    {...first, id: 'neither', bpm: null, key: null, mode: null},
   ];
-  const found = searchAll({tracks: candidates, artists: []}, '', {...emptyFilters, hasAttributes: true}, emptyWorkspace());
-  assert.deepEqual(found.tracks.map(track => track.id), ['valid']);
+  const mixed = {...emptyWorkspace(), lyrics: Object.fromEntries(candidates.map(track => [track.id, {...local, trackId: track.id}]))};
+  for (const [flags, expected] of [
+    [{hasBpm: true}, ['valid', 'no-key', 'no-mode']],
+    [{hasTonality: true}, ['valid', 'no-bpm']],
+    [{hasBpm: true, hasTonality: true}, ['valid']],
+  ] as [Partial<Filters>, string[]][]) {
+    const result = searchAll({tracks: candidates, artists: []}, 'teste', {...emptyFilters, ...flags}, mixed);
+    assert.deepEqual(result.tracks.map(track => track.id), expected);
+    assert.deepEqual(result.passages.map(p => p.track.id), expected);
+  }
+  for (const bpm of [0, -1, NaN, Infinity, 401]) {
+    assert.equal(searchAll({tracks: [{...first, bpm}], artists: []}, '', {...emptyFilters, hasBpm: true}, mixed).tracks.length, 0);
+  }
 });
 
 test('letra disponível exige texto e não considera referência externa, texto vazio ou apenas espaços', () => {
@@ -113,12 +135,20 @@ test('flags novas são neutras por padrão, sobrevivem à URL e limpar remove fl
   const old = filtersFromParams(new URLSearchParams('unknown=1'));
   assert.deepEqual(old, emptyFilters);
   assert.equal(hasFilters(filtersFromParams(new URLSearchParams('hasAttributes=0&hasLyrics=no'))), false);
-  const active = {...emptyFilters, hasAttributes: true, hasLyrics: true};
-  const base = filtersToParams(active, new URLSearchParams('q=rap&unknown=1&pagina=3'));
+  const active = {...emptyFilters, hasBpm: true, hasTonality: true, hasLyrics: true};
+  const base = filtersToParams(active, new URLSearchParams('q=rap&unknown=1&pagina=3&hasAttributes=1'));
   assert.deepEqual(filtersFromParams(new URLSearchParams(base.toString())), active);
   const cleared = filtersToParams(emptyFilters, base);
   assert.equal(cleared.get('q'), 'rap');
-  for (const key of ['unknown', 'hasAttributes', 'hasLyrics', 'pagina']) assert.equal(cleared.has(key), false);
+  for (const key of ['unknown', 'hasAttributes', 'hasBpm', 'hasTonality', 'hasLyrics', 'pagina']) assert.equal(cleared.has(key), false);
+  for (const flag of ['hasBpm', 'hasTonality'] as const) {
+    const independent = {...emptyFilters, [flag]: true};
+    assert.deepEqual(filtersFromParams(filtersToParams(independent)), independent);
+  }
+  assert.deepEqual(filtersFromParams(new URLSearchParams('hasAttributes=1')), {...emptyFilters, hasBpm: true, hasTonality: true});
+  const migrated = filtersToParams(filtersFromParams(new URLSearchParams('hasAttributes=1')), new URLSearchParams('hasAttributes=1'));
+  assert.equal(migrated.has('hasAttributes'), false);
+  assert.equal(migrated.get('hasBpm'), '1'); assert.equal(migrated.get('hasTonality'), '1');
 });
 
 test('BPM aceita apenas números de 0 a 400 e decimais com vírgula ou ponto', () => {

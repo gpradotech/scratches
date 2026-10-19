@@ -1,11 +1,11 @@
-.feedback-form {display: flex; flex-direction: column; gap: 14px}
-.feedback-form label {display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; font-size: 13px; font-weight: 550}
-.feedback-form>label>input, .feedback-form>label>textarea {flex-basis: 100%; width: 100%; font-size: 14px; margin-top: 2px}
+.feedback-form {display: flex; flex-direction: column; gap: 16px}
+.feedback-form label {display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 550}
+.feedback-form>label>input, .feedback-form>label>textarea {flex-basis: 100%; width: 100%; font-size: 14px; margin-top: 8px}
 .feedback-form textarea {min-height: 150px}
 .feedback-field-help.caption {margin: -8px 0 0; font-size: 12px}
-.feedback-privacy.caption {margin: 2px 0 0; font-size: 12px}
-.feedback-availability {border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; background: var(--surface); font-size: 13px}
-.feedback-availability p {margin-bottom: 10px}
+.feedback-privacy.caption {margin: 8px 0 0; font-size: 12px}
+.feedback-availability {border: 1px solid var(--border); border-radius: 6px; padding: 16px 16px; background: var(--surface); font-size: 13px}
+.feedback-availability p {margin-bottom: 8px}
 .feedback-availability p:last-child {margin-bottom: 0}
 .feedback-form .error-text {margin: 0}
-.feedback-form .dialog-actions {margin-top: 6px}
+.feedback-form .dialog-actions {margin-top: 8px}

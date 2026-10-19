@@ -19,6 +19,11 @@ test('código público prepara catálogo vazio sem corpus privado e preserva cat
     const personal = JSON.stringify({tracks: [{id: 'personal'}], artists: []});
     await fs.writeFile(target, personal); run();
     assert.equal(await fs.readFile(target, 'utf8'), personal);
+    // Ter material de pesquisa na máquina não deve repovoar a instalação do usuário.
+    await fs.mkdir(path.join(root, 'dados/corpus-inicial-v1'), {recursive: true});
+    await fs.writeFile(path.join(root, 'dados/corpus-inicial-v1/tracks.json'), '[{"id":"development"}]');
+    await fs.writeFile(target, JSON.stringify({tracks: [], artists: []})); run();
+    assert.deepEqual(JSON.parse(await fs.readFile(target)), {tracks: [], artists: []});
   } finally {
     assert.ok(path.resolve(root).startsWith(path.join(os.tmpdir(), 'scratches-catalog-')));
     await fs.rm(root, {recursive: true, force: true});

@@ -1,0 +1,9 @@
+.metadata-option{display:flex;align-items:center;gap:16px;min-width:0}
+.metadata-option-copy{display:flex;flex-direction:column;gap:8px;min-width:0}
+.metadata-option-copy small{color:var(--muted);font-size:11px}
+.metadata-option>.artist-avatar,.metadata-option-cover{width:40px;height:40px;flex:none}
+.metadata-option-cover{display:grid;place-items:center;overflow:hidden;border-radius:4px;background:var(--panel);color:var(--muted)}
+.metadata-option-cover img{width:100%;height:100%;object-fit:cover}
+.metadata-option--create{color:var(--soft)}
+.metadata-option--create>svg{flex:none}
+.metadata-offline{display:block;color:var(--muted);font-size:12px;margin-top:8px}

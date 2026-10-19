@@ -1,9 +1,10 @@
-import {ButtonLabel, ButtonLink, SurfaceLink, TextLink} from './Controls.tsx';
+import {Button, ButtonLabel, ButtonLink, SurfaceLink, TextLink} from './Controls.tsx';
 import {useMemo, useRef} from 'react';
 import type {ReactNode} from 'react';
-import type {Catalog, Workspace} from '../domain/model.ts';
+import type {Catalog, Track, Workspace} from '../domain/model.ts';
 import type {Filters} from '../domain/search.ts';
 import {hasFieldFilters, searchAll} from '../domain/search.ts';
+import {parseSearchQuery} from '../domain/searchQuery.ts';
 import {artistUrl, go, trackUrl} from '../routing.ts';
 import {Cover, Empty, Icon} from './UI.tsx';
 import {FilterPanel} from './Filters.tsx';
@@ -11,13 +12,16 @@ import type {FilterChangeOptions} from './Filters.tsx';
 import {TrackList} from './TrackList.tsx';
 import {ArtistDiscography} from './ArtistDiscography.tsx';
 import {SectionTitle} from './SectionTitle.tsx';
-export function Explore({catalog, workspace, query, filters, setFilters, search, params}: {catalog: Catalog; workspace: Workspace; query: string; filters: Filters; setFilters: (f: Filters, options?: FilterChangeOptions) => void; search: ReactNode; params: URLSearchParams}) {
+import {Artwork} from './Artwork.tsx';
+export function Explore({catalog, workspace, query, filters, setFilters, search, params, onAddTrack, renderActions}: {catalog: Catalog; workspace: Workspace; query: string; filters: Filters; setFilters: (f: Filters, options?: FilterChangeOptions) => void; search: ReactNode; params: URLSearchParams; onAddTrack: () => void; renderActions: (track: Track) => ReactNode}) {
   const compactHero = !!query || hasFieldFilters(filters);
   const results = useMemo(() => searchAll(catalog, query, filters, workspace), [catalog, query, filters, workspace]);
+  const parsed = useMemo(() => parseSearchQuery(query), [query]);
+  const searchesLyrics = parsed.groups.flat().some(term => !term.exclude && (term.field === 'any' || term.field === 'inlyric'));
   const passages = results.passages;
   const resultCount = results.artists.length + results.tracks.length + passages.length;
   const hasResults = !!(results.artists.length || results.tracks.length || passages.length);
-  const lyricCount = Object.keys(workspace.lyrics).length;
+  const lyricCount = catalog.tracks.filter(track => workspace.lyrics[track.id]).length;
   const trackHeading = useRef<HTMLHeadingElement>(null);
   return <>
     <section className={'explore-hero' + (compactHero ? ' compact' : '')}>
@@ -25,16 +29,17 @@ export function Explore({catalog, workspace, query, filters, setFilters, search,
       {search}
     </section>
     <FilterPanel filters={filters} onChange={setFilters} catalog={catalog} workspace={workspace}/>
-      {results.artists.length > 0 && <section className="result-section"><SectionTitle count={results.artists.length}>{results.artists.length === 1 ? 'Artista' : 'Artistas'}</SectionTitle><div className="artist-results">{results.artists.map(a => <SurfaceLink className="artist-result" href={artistUrl(a.id)} key={a.id}>{a.picture ? <img src={a.picture} alt={a.name}/> : <span className="artist-initial">{a.name.slice(0, 1)}</span>}<span><strong>{a.name}</strong><small>Artista</small></span><ButtonLabel>Ver artista <Icon name="arrow"/></ButtonLabel></SurfaceLink>)}</div></section>}
-      {results.tracks.length > 0 && <section className="result-section">
-      <TrackList tracks={results.tracks} artistProfiles={catalog.artists} params={params} headingRef={trackHeading} onParamsChange={next => go('/explorar', next, {preserveScroll: true})}
+      {parsed.error && <p className="error-text" role="alert">{parsed.error}</p>}
+      {results.artists.length > 0 && <section className="result-section"><SectionTitle count={results.artists.length}>{results.artists.length === 1 ? 'Artista' : 'Artistas'}</SectionTitle><div className="artist-results">{results.artists.map(a => <SurfaceLink className="artist-result" href={artistUrl(a.id)} key={a.id}><Artwork source={a.picture} alt={a.name} fallback={<span className="artist-initial">{a.name.slice(0, 1)}</span>}/><span><strong>{a.name}</strong><small>Artista</small></span><ButtonLabel>Ver artista <Icon name="arrow"/></ButtonLabel></SurfaceLink>)}</div></section>}
+      <section className="result-section">
+      <TrackList toolbarActions={<Button onClick={onAddTrack}><Icon name="plus"/>Adicionar música</Button>} renderActions={renderActions} tracks={results.tracks} artistProfiles={catalog.artists} params={params} headingRef={trackHeading} onParamsChange={next => go('/explorar', next, {preserveScroll: true})}
         heading={<SectionTitle ref={trackHeading} tabIndex={-1} className="paginated-heading" count={results.tracks.length}>Catálogo</SectionTitle>}/>
-      </section>}
+      </section>
     {passages.length > 0 && <section className="result-section"><div className="section-heading"><SectionTitle count={passages.length}>Trechos</SectionTitle></div>
       <div className="passage-results">{passages.map(p => <article className="passage-result" key={p.track.id + ':' + p.start}><Cover track={p.track}/><div><TextLink underline={false} className="track-title" href={trackUrl(p.track.id)}>{p.track.title}</TextLink><p className="metadata">{p.track.artists.map(a => a.name).join(', ')} · Linhas {p.startLine}–{p.endLine}</p><blockquote>{p.text}</blockquote></div><ButtonLink href={trackUrl(p.track.id) + `?inicio=${p.start}&fim=${p.end}&rev=${encodeURIComponent(workspace.lyrics[p.track.id].revision)}`}>Ver na letra <Icon name="arrow" size={17}/></ButtonLink></article>)}</div>
     </section>}
-    {!hasResults && (catalog.tracks.length || catalog.artists.length ? <Empty title="Nenhum resultado encontrado"><p>Tente outro título, artista, palavra ou frase, ou ajuste os filtros.</p></Empty> : <Empty title="Seu catálogo está vazio"><p>Esta instalação começa sem músicas e artistas. A inclusão de um catálogo estará disponível em uma próxima versão.</p></Empty>)}
-    {catalog.tracks.length > 0 && query.trim() && !passages.length && <p className="caption">{lyricCount ? `Nenhum trecho encontrado ${lyricCount === 1 ? 'na letra adicionada' : `nas ${lyricCount} letras adicionadas`} ao seu acervo.` : 'A busca também encontra trechos nas letras que você adicionar ao seu acervo.'}</p>}
+    {!parsed.error && !hasResults && (catalog.tracks.length || catalog.artists.length ? <Empty title="Nenhum resultado encontrado" action={<Button onClick={onAddTrack}><Icon name="plus"/>Adicionar uma música</Button>}><p>Tente outra pesquisa ou ajuste os filtros. Se a música não estiver no catálogo, você pode adicioná-la.</p></Empty> : <Empty title="Seu catálogo está vazio" action={<Button variant="primary" onClick={onAddTrack}><Icon name="plus"/>Adicionar a primeira música</Button>}><p>Busque os metadados nas fontes ou cadastre uma música manualmente para começar.</p></Empty>)}
+    {catalog.tracks.length > 0 && searchesLyrics && !parsed.error && !passages.length && <p className="caption">{lyricCount ? `Nenhum trecho encontrado nas ${lyricCount} letras indexadas até agora. A cobertura das fontes pode ser parcial.` : 'As letras são consultadas automaticamente nas fontes. A busca de trechos estará disponível conforme forem indexadas.'}</p>}
   </>;
 }
 export function ArtistPage({catalog, id, exploreUrl, params}: {exploreUrl: string; catalog: Catalog; id: string; params: URLSearchParams}) {
@@ -44,7 +49,7 @@ export function ArtistPage({catalog, id, exploreUrl, params}: {exploreUrl: strin
   return <>
     <TextLink className="back-link inline-icon-link" href={exploreUrl}><Icon name="arrow-left" size={16}/>Voltar a Explorar</TextLink>
     <div className="breadcrumb"><TextLink href={exploreUrl}>Explorar</TextLink><span>/</span>{artist.name}</div>
-    <section className="artist-hero">{artist.picture ? <img src={artist.picture} alt={artist.name}/> : <span className="artist-initial hero-initial">{artist.name.slice(0, 1)}</span>}<div><p className="eyebrow">ARTISTA</p><h1>{artist.name}</h1><p className="muted">{available.length} {available.length === 1 ? 'música disponível' : 'músicas disponíveis'} no catálogo.</p></div></section>
+    <section className="artist-hero"><Artwork source={artist.picture} alt={artist.name} fallback={<span className="artist-initial hero-initial">{artist.name.slice(0, 1)}</span>}/><div><p className="eyebrow">ARTISTA</p><h1>{artist.name}</h1><p className="muted">{available.length} {available.length === 1 ? 'música disponível' : 'músicas disponíveis'} no catálogo.</p></div></section>
     <ArtistDiscography catalog={catalog} artistId={id} params={params}/>
   </>;
 }

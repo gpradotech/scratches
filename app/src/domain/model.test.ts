@@ -141,7 +141,8 @@ test('busca encontra título sem acento e um único artista, sem exigir texto de
 test('atributo ausente é aceito no estado neutro e excluído pelo filtro correspondente', () => {
   assert.equal(searchCatalog(catalog, '', emptyFilters, emptyWorkspace()).tracks.length, 1);
   assert.equal(searchCatalog(catalog, '', {...emptyFilters, bpmMin: '80'}, emptyWorkspace()).tracks.length, 0);
-  assert.equal(searchCatalog(catalog, '', {...emptyFilters, hasAttributes: true}, emptyWorkspace()).tracks.length, 0);
+  assert.equal(searchCatalog(catalog, '', {...emptyFilters, hasBpm: true}, emptyWorkspace()).tracks.length, 0);
+  assert.equal(searchCatalog(catalog, '', {...emptyFilters, hasTonality: true}, emptyWorkspace()).tracks.length, 0);
 });
 test('fragmentos são recuperados somente de textos locais e conservam intervalos', () => {
   assert.equal(searchPassages(catalog, 'teste', emptyFilters, emptyWorkspace()).length, 0);
@@ -191,7 +192,7 @@ test('uma consulta encontrada somente na letra continua produzindo resultados', 
 test('links antigos com modo não limitam a busca e preservam os filtros', () => {
   const oldCatalog = filtersFromParams(new URLSearchParams('modo=catalogo&bpmMin=80&unknown=1'));
   const oldPassages = filtersFromParams(new URLSearchParams('modo=trechos&bpmMin=80&unknown=1'));
-  assert.deepEqual(oldCatalog, oldPassages); assert.equal(oldCatalog.bpmMin, '80'); assert.equal(oldCatalog.hasAttributes, false); assert.equal(oldCatalog.hasLyrics, false);
+  assert.deepEqual(oldCatalog, oldPassages); assert.equal(oldCatalog.bpmMin, '80'); assert.equal(oldCatalog.hasBpm, false); assert.equal(oldCatalog.hasTonality, false); assert.equal(oldCatalog.hasLyrics, false);
   const results = searchAll({...catalog, tracks: [{...t, bpm: 88.5}]}, 'texto', oldCatalog, {...emptyWorkspace(), lyrics: {[t.id]: lyric}});
   assert.equal(results.passages.length, 3);
 });

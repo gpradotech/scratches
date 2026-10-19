@@ -5,10 +5,25 @@ import os from 'node:os';
 import path from 'node:path';
 import {WorkspaceStore, Conflict} from './store.ts';
 import {emptyWorkspace, lyricLanguages} from '../src/domain/model.ts';
+import {newTrack, saveTrack} from '../src/domain/library.ts';
 async function cleanup(dir: string) {
   assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir()) + path.sep + 'scratches-store-'));
   await fs.rm(dir, {recursive: true, force: true});
 }
+
+test('origem importada e complementos manuais sobrevivem a outra instância de armazenamento', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'scratches-store-'));
+  try {
+    const file = path.join(dir, 'workspace.json');
+    const track = {...newTrack(), id: 'deezer:42', title: 'Fonte', artists: [{id: 'deezer-artist:1', name: 'Artista'}], source: 'https://www.deezer.com/track/42', sourceMatch: 'provider_catalog'};
+    const catalog = {tracks: [track], artists: []};
+    await new WorkspaceStore(file).save(saveTrack(emptyWorkspace(), catalog, {...track, bpm: 90}, track.id));
+    const reopened = await new WorkspaceStore(file).read();
+    assert.equal(reopened.tracks![track.id].metadataOrigins?.title, 'imported');
+    assert.equal(reopened.tracks![track.id].metadataOrigins?.bpm, 'manual');
+    assert.throws(() => saveTrack(reopened, catalog, {...reopened.tracks![track.id], title: 'Alterado'}, track.id), /importad/);
+  } finally {await cleanup(dir);}
+});
 
 test('idiomas múltiplos e idioma legado sobrevivem à gravação e reabertura', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'scratches-store-'));
@@ -48,5 +63,16 @@ test('arquivo inválido é preservado em vez de reinicializado', async () => {
   try {
     const file = path.join(dir, 'workspace.json'); await fs.writeFile(file, 'arquivo corrompido');
     await assert.rejects(new WorkspaceStore(file).read()); assert.equal(await fs.readFile(file, 'utf8'), 'arquivo corrompido');
+  } finally {await cleanup(dir);}
+});
+test('cadastro e edição de metadados sobrevivem à reabertura e recusam gravação antiga', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'scratches-store-'));
+  try {
+    const file = path.join(dir, 'workspace.json'); const store = new WorkspaceStore(file);
+    const track = {...newTrack(), title: 'Música cadastrada', artists: [{id: 'a', name: 'Artista'}]};
+    const saved = await store.save({...emptyWorkspace(), tracks: {[track.id]: track}});
+    const edited = await new WorkspaceStore(file).save({...saved, tracks: {[track.id]: {...track, title: 'Nome corrigido', bpm: 91.5}}});
+    await assert.rejects(store.save(saved), Conflict);
+    assert.deepEqual(await new WorkspaceStore(file).read(), edited);
   } finally {await cleanup(dir);}
 });

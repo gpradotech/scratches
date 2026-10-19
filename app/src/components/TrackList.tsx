@@ -32,30 +32,30 @@ function SortBar({sort, onChange, onResize, view, compact}: {sort: TrackSort; on
     </TextAction>{view === 'list' && column !== 'duration' && <ColumnResize column={column} bar={bar} widths={widths} compact={compact} onResize={nextWidths => {if (nextWidths) setWidths(nextWidths); onResize(nextWidths);}}/>}</div>;
   })}</div><p className="sr-only" role="status" aria-live="polite">{sortAnnouncement(sort)}</p></>;
 }
-function TrackIdentity({track: t, artistProfiles, collapseArtists = false}: {track: Track; artistProfiles?: readonly Artist[]; collapseArtists?: boolean}) {
+function TrackIdentity({track: t, artistProfiles, collapseArtists = false, actions}: {actions?: ReactNode; track: Track; artistProfiles?: readonly Artist[]; collapseArtists?: boolean}) {
   return <div className="track-identity"><TextLink underline={false} className="track-title" title={t.title} href={trackUrl(t.id)}><span className="track-title-text">{t.title}</span></TextLink>
-      <TrackArtists track={t} artistProfiles={artistProfiles} collapsed={collapseArtists}/>
+      <TrackArtists track={t} artistProfiles={artistProfiles} collapsed={collapseArtists}/>{actions}
     </div>;
 }
 function TrackBpm({track}: {track: Track}) {
   return <span className="track-bpm" aria-label={track.bpm === null ? 'BPM não informado' : `${track.bpm} BPM`} title={track.bpm === null ? 'BPM não informado' : undefined}>{track.bpm === null ? '—' : track.bpm.toLocaleString('pt-BR', {maximumFractionDigits: 1})}</span>;
 }
-function TrackRow({track: t, number, compact}: {track: Track; number: number; compact?: boolean}) {
+function TrackRow({track: t, artistProfiles, number, compact, actions}: {actions?: ReactNode; track: Track; artistProfiles?: readonly Artist[]; number: number; compact?: boolean}) {
   return <article className="track-row track-item track-surface">
     <span className="track-number" aria-label={'Número ' + number}>{number}</span>{!compact && <Cover track={t}/>}
-    <TrackIdentity track={t}/>
+    <TrackIdentity track={t} artistProfiles={artistProfiles} collapseArtists actions={actions}/>
     {!compact && <TextLink className="track-album" title={t.album} href={albumUrl(t)}>{t.album}</TextLink>}<TrackBpm track={t}/><span className="track-duration">{duration(t.duration)}</span>
   </article>;
 }
-function TrackGalleryCard({track, artistProfiles}: {track: Track; artistProfiles?: readonly Artist[]}) {
+function TrackGalleryCard({track, artistProfiles, actions}: {actions?: ReactNode; track: Track; artistProfiles?: readonly Artist[]}) {
   return <article className="track-gallery-card track-item track-surface">
-    <Cover track={track}/><TrackIdentity track={track} artistProfiles={artistProfiles} collapseArtists/>
+    <Cover track={track}/><TrackIdentity track={track} artistProfiles={artistProfiles} collapseArtists actions={actions}/>
     <TextLink className="track-album" title={track.album} href={albumUrl(track)}>{track.album}</TextLink>
     <div className="track-gallery-facts"><span><TrackBpm track={track}/> <span aria-hidden="true">BPM</span></span><span aria-label={'Duração ' + duration(track.duration)}><Icon name="clock" size={14}/>{duration(track.duration)}</span></div>
   </article>;
 }
-export function TrackList({tracks, artistProfiles, params, onParamsChange, headingRef, heading, fixedView, showViewControls = true, paginate = true, compact = false}: {
-  tracks: Track[]; artistProfiles?: readonly Artist[]; params: URLSearchParams; onParamsChange: (params: URLSearchParams) => void;
+export function TrackList({tracks, artistProfiles, params, onParamsChange, headingRef, heading, fixedView, showViewControls = true, paginate = true, compact = false, toolbarActions, renderActions}: {
+  toolbarActions?: ReactNode; renderActions?: (track: Track) => ReactNode; tracks: Track[]; artistProfiles?: readonly Artist[]; params: URLSearchParams; onParamsChange: (params: URLSearchParams) => void;
   headingRef: RefObject<HTMLHeadingElement | null>; heading?: ReactNode; fixedView?: CatalogView; showViewControls?: boolean; paginate?: boolean; compact?: boolean;
 }) {
   const sort = sortFromParams(params);
@@ -67,12 +67,12 @@ export function TrackList({tracks, artistProfiles, params, onParamsChange, headi
   const start = paginate ? paging.start : 0;
   const end = paginate ? paging.end : ordered.length;
   return <div className="track-collection" data-compact={compact || undefined} style={columnWidths ? {'--track-resized-grid': trackColumnTemplate(columnWidths)} as CSSProperties : undefined}>
-    {(heading || showViewControls) && <div className="track-collection-heading">{heading}{showViewControls && <div className="track-view-toolbar"><SegmentedControl value={view} label="Visualização do catálogo" onChange={next => {focusTracks.current = false; onParamsChange(catalogViewParams(params, next));}}
+    {(heading || showViewControls) && <div className="track-collection-heading">{heading}{showViewControls && <div className="track-view-toolbar">{toolbarActions}<SegmentedControl value={view} label="Visualização do catálogo" onChange={next => {focusTracks.current = false; onParamsChange(catalogViewParams(params, next));}}
       options={[{value: 'list', label: <><Icon name="list" size={18}/>Lista</>}, {value: 'gallery', label: <><Icon name="gallery" size={18}/>Galeria</>}]}/></div>}</div>}
-    <SortBar sort={sort} view={view} compact={compact} onResize={setColumnWidths} onChange={next => {focusTracks.current = false; onParamsChange(sortingParams(params, next));}}/>
+    {tracks.length > 0 && <SortBar sort={sort} view={view} compact={compact} onResize={setColumnWidths} onChange={next => {focusTracks.current = false; onParamsChange(sortingParams(params, next));}}/>}
     <div ref={gridRef} className={view === 'gallery' ? 'track-gallery' : 'track-list'}>{ordered.slice(start, end).map((track, index) => view === 'gallery'
-      ? <TrackGalleryCard key={track.id} track={track} artistProfiles={artistProfiles}/>
-      : <TrackRow key={track.id} track={track} compact={compact} number={trackListNumber(start + index, paging.total, sort)}/>)}</div>
-    {paginate && <Pagination key={`${paging.page}-${paging.pageSize}-${paging.total}`} state={paging} pageSizeOptions={pageSizeOptions} onChange={(page, size) => {if (page === paging.page && size === paging.pageSize) return; focusTracks.current = true; onParamsChange(pageParams(page, size));}}/>}
+      ? <TrackGalleryCard key={track.id} track={track} artistProfiles={artistProfiles} actions={renderActions?.(track)}/>
+      : <TrackRow key={track.id} track={track} artistProfiles={artistProfiles} actions={renderActions?.(track)} compact={compact} number={trackListNumber(start + index, paging.total, sort)}/>)}</div>
+    {paginate && tracks.length > 0 && <Pagination key={`${paging.page}-${paging.pageSize}-${paging.total}`} state={paging} pageSizeOptions={pageSizeOptions} onChange={(page, size) => {if (page === paging.page && size === paging.pageSize) return; focusTracks.current = true; onParamsChange(pageParams(page, size));}}/>}
   </div>;
 }

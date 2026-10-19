@@ -21,7 +21,7 @@ export function AlbumPage({catalog, id, exploreUrl, params}: {catalog: Catalog; 
       <div><p className="eyebrow">{album.releaseType ? releaseTypeLabels[album.releaseType].toLocaleUpperCase('pt-BR') : 'LANÇAMENTO'}</p><h1>{album.title}</h1><p className="metadata">{album.artist && <TextLink href={artistUrl(album.artist.id)}>{album.artist.name}</TextLink>}</p><p className="muted">{album.tracks.length} {album.tracks.length === 1 ? 'música disponível' : 'músicas disponíveis'} no catálogo · {duration(album.duration)}</p></div>
     </section>
     <section className="result-section"><div className="section-heading"><SectionTitle ref={heading} tabIndex={-1} className="paginated-heading" count={album.tracks.length}>Músicas</SectionTitle></div>
-      <TrackList tracks={album.tracks} params={params} headingRef={heading} fixedView="list" showViewControls={false} onParamsChange={next => go('/album/' + encodeURIComponent(id), next, {preserveScroll: true})}/>
+      <TrackList tracks={album.tracks} artistProfiles={catalog.artists} params={params} headingRef={heading} fixedView="list" showViewControls={false} onParamsChange={next => go('/album/' + encodeURIComponent(id), next, {preserveScroll: true})}/>
     </section>
   </>;
 }

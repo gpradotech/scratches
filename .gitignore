@@ -11,7 +11,12 @@ test-results/
 *.local
 .DS_Store
 Thumbs.db
-/dados/
-/.scratches/
+
+# Material coletado para o estudo local; publicar somente apos revisao explicita.
+/dados/corpus-inicial-v1/
+/dados/prototipo-02/
 /app/public/catalogo/
-/servicos/feedback/php/config.php
+
+# Estado privado de atualizacoes
+/.scratches/
+/lib/seed/artwork/

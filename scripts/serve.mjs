@@ -4,26 +4,37 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {WorkspaceStore} from '../app/server/store.ts';
 import {workspaceApi} from '../app/server/api.ts';
+import {musicApi} from '../app/server/music.ts';
 import {UpdateManager} from '../lib/updates.mjs';
 import {updatesApi} from '../lib/updates-api.mjs';
 import {feedbackApi} from '../lib/feedback-api.mjs';
 import {instanceApi,instanceInfo} from '../lib/app-instance.mjs';
+import {LyricsSync, lyricsApi} from '../lib/lyrics-sync.mjs';
+import {ArtworkCache, artworkApi} from '../lib/artwork-cache.mjs';
+import {readCatalog} from '../lib/catalog-seed.mjs';
 
 const appPath='app';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
-export async function createApp({root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=Number(process.env.SCRATCHES_PORT || 5174),updateOptions={},feedbackOptions={}}={}) {
+export async function createApp({root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=Number(process.env.SCRATCHES_PORT || 5174),updateOptions={},feedbackOptions={},musicOptions={}}={}) {
   const store=new WorkspaceStore(path.join(root,'dados/prototipo-02/workspace.json'));
   await store.read(); // Um arquivo inválido não pode ser confirmado como início saudável.
   const dist=path.join(root,appPath,'dist');await fs.access(path.join(dist,'index.html'));
   let manager;
   const workspace=workspaceApi(store);
   const feedback=feedbackApi(feedbackOptions);
+  const music=musicApi(musicOptions.client);
+  const artwork=artworkApi(new ArtworkCache(root));
+  const lyricSync=new LyricsSync(root,store);
+  const lyrics=lyricsApi(lyricSync);
   const instance=instanceApi(await instanceInfo(root,'distribution'));
   const server=http.createServer(async(req,res)=>{
     const send=(status,text)=>{res.writeHead(status,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'});res.end(text);};
     try {
       instance(req,res,()=>{});if(res.writableEnded)return;
       await feedback(req,res,()=>{});if(res.writableEnded)return;
+      await music(req,res,()=>{});if(res.writableEnded)return;
+      await artwork(req,res,()=>{});if(res.writableEnded)return;
+      await lyrics(req,res,()=>{});if(res.writableEnded)return;
       await updatesApi(manager)(req,res,()=>{});if(res.writableEnded)return;
       store.blocked=manager.phase==='restarting';
       await workspace(req,res,()=>{});if(res.writableEnded)return;
@@ -32,11 +43,7 @@ export async function createApp({root=path.resolve(path.dirname(fileURLToPath(im
       if(!/^(127\.0\.0\.1|localhost):\d+$/.test(host))return send(403,'Acesso local obrigatório.');
       const pathname=decodeURIComponent(new URL(req.url,'http://'+host).pathname);
       if(pathname==='/catalogo/catalogo.json') {
-        // Catálogo pessoal é preservado e distribuído separadamente do código.
-        for(const folder of [path.join(root,appPath,'public'),dist]) {
-          try {const bytes=await fs.readFile(path.join(folder,'catalogo/catalogo.json'));res.writeHead(200,{'Content-Type':types['.json'],'Cache-Control':'no-store'});return res.end(bytes);}catch(e){if(e.code!=='ENOENT')throw e;}
-        }
-        res.writeHead(200,{'Content-Type':types['.json'],'Cache-Control':'no-store'});return res.end(JSON.stringify({tracks:[],artists:[]}));
+        res.writeHead(200,{'Content-Type':types['.json'],'Cache-Control':'no-store'});return res.end(JSON.stringify(await readCatalog(root,appPath)));
       }
       if(pathname.split('/').some(part=>part==='..' || part.startsWith('.')) || pathname.includes('\\') || pathname.includes('\0'))return send(404,'Página não encontrada.');
       const base=pathname.startsWith('/catalogo/')?path.join(root,appPath,'public'):dist;
@@ -50,7 +57,7 @@ export async function createApp({root=path.resolve(path.dirname(fileURLToPath(im
   manager=await new UpdateManager(root,{...updateOptions,busy:()=>store.busy || !!updateOptions.busy?.()}).init();
   try {await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(port,'127.0.0.1',resolve);});}
   catch(e){manager.close();throw e;}
-  return {server,store,updates:manager,url:`http://127.0.0.1:${server.address().port}`,async close(){manager.close();store.blocked=true;await store.idle();await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});}};
+  return {server,store,updates:manager,url:`http://127.0.0.1:${server.address().port}`,async close(){lyricSync.stop();manager.close();store.blocked=true;await store.idle();await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});}};
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
   let app,closing=false;

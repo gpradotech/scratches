@@ -1,7 +1,7 @@
 {
   "name": "scratches",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "workspaces": [
     "app"
   ],
@@ -15,7 +15,9 @@
     "check:privacy": "node scripts/check-public-privacy.mjs",
     "check:privacy:history": "node scripts/check-public-privacy.mjs --history",
     "test": "npm run test --workspaces --if-present && npm run test:updates",
-    "preview": "npm run preview --workspace @scratches/app"
+    "preview": "npm run preview --workspace @scratches/app",
+    "catalogo:popular": "node --use-system-ca scripts/popular-catalogo.mjs",
+    "catalogo:capas": "node --use-system-ca scripts/cache-artwork.mjs"
   },
   "engines": {
     "node": ">=22.19.0"

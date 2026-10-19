@@ -1,26 +1,26 @@
-.track-collection-heading {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 18px}
+.track-collection-heading {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 16px}
 .track-collection-heading h2 {margin: 0}
 .track-view-toolbar {display: flex; justify-content: flex-end; margin-left: auto}
-.track-sort-bar.track-sort-gallery {display: flex; flex-wrap: wrap; gap: 6px 28px; padding: 0 0 10px; margin-bottom: 18px}
+.track-sort-bar.track-sort-gallery {display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 0 0 8px; margin-bottom: 16px}
 .track-sort-gallery .track-sort-cell>button {min-width: 36px}
-.track-gallery {display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; align-items: stretch}
-.track-gallery-card {display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: #131a2280}
+.track-gallery {display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 24px; align-items: stretch}
+.track-gallery-card {display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: #131a2280}
 .track-gallery-card>.cover {width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 5px}
 .track-gallery-card>.cover-fallback {height: auto; font-size: 32px}
 .track-gallery-card .track-identity {flex: none}
-.track-gallery-card .track-title {display: block; margin-bottom: 6px; font-size: 17px; line-height: 1.35}
+.track-gallery-card .track-title {display: block; margin-bottom: 8px; font-size: 17px; line-height: 1.35}
 .track-gallery-card .track-title::after {border-radius: 8px}
 .track-gallery-card .metadata {font-size: 13px; line-height: 1.6; overflow-wrap: anywhere}
 .track-gallery-card>.track-album {font-size: 12px; line-height: 1.5; margin-top: 0}
-.track-gallery-facts {display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px; margin-top: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums}
-.track-gallery-facts>span {display: inline-flex; align-items: center; gap: 5px}
+.track-gallery-facts {display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--border); padding-top: 8px; margin-top: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums}
+.track-gallery-facts>span {display: inline-flex; align-items: center; gap: 8px}
 .track-gallery-facts .track-bpm {font-size: inherit}
 @media(max-width:600px) {
   .track-view-toolbar {justify-content: flex-start; margin-left: 0}
-  .track-gallery {grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px}
-  .track-gallery-card {padding: 10px; gap: 10px}
+  .track-gallery {grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px}
+  .track-gallery-card {padding: 8px; gap: 8px}
   .track-gallery-card .track-title {font-size: 15px}
   .track-gallery-card .metadata, .track-gallery-card>.track-album {font-size: 12px}
-  .track-gallery-facts {font-size: 11px; gap: 4px}
-  .track-sort-bar.track-sort-gallery {gap: 4px 18px}
+  .track-gallery-facts {font-size: 11px; gap: 8px}
+  .track-sort-bar.track-sort-gallery {gap: 8px 16px}
 }

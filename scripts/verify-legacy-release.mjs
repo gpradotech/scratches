@@ -1,0 +1,50 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {gunzipSync} from 'node:zlib';
+import {pathToFileURL} from 'node:url';
+import {spawn} from 'node:child_process';
+import {sha256} from '../lib/update-package.mjs';
+const oldFile=process.argv[2], newFile=process.argv[3];
+if(!oldFile || !newFile)throw Error('Informe os pacotes de atualização 0.1.0 e novo.');
+const oldBytes=await fs.readFile(oldFile), bytes=await fs.readFile(newFile);
+assert.equal(sha256(oldBytes),'031e3bbad19c2a22c2fcc9ab61d72a756c9dfef1dac22c87e78822a9b98a9a99');
+const old=JSON.parse(gunzipSync(oldBytes)), update=JSON.parse(gunzipSync(bytes));
+const root=path.resolve('.scratches','legacy-release-qa-'+Date.now());await fs.mkdir(root,{recursive:true});
+for(const file of old.files) {
+  const target=path.resolve(root,file.path);assert.ok(target.startsWith(root+path.sep));
+  const content=Buffer.from(file.content,'base64');assert.equal(sha256(content),file.sha256);
+  await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,content);
+}
+const installer=await import(pathToFileURL(path.join(root,'lib/update-installer.mjs')).href);
+const decoder=await import(pathToFileURL(path.join(root,'lib/update-package.mjs')).href);
+decoder.decodePackage(bytes,{version:update.version,digest:sha256(bytes)});
+const workspaceFile=path.join(root,'dados/prototipo-02/workspace.json');await fs.mkdir(path.dirname(workspaceFile),{recursive:true});
+const workspace=Buffer.from(JSON.stringify({schema:2,revision:1,projects:[],lyrics:{}}));await fs.writeFile(workspaceFile,workspace);
+const catalogFile=path.join(root,'prototipos/02-exploracao-local/public/catalogo/catalogo.json');await fs.mkdir(path.dirname(catalogFile),{recursive:true});
+const catalog=Buffer.from(JSON.stringify({tracks:[],artists:[]}));await fs.writeFile(catalogFile,catalog);
+const identity=path.join(path.dirname(catalogFile),'preserved.txt');await fs.writeFile(identity,'local-only');
+const checkData=async()=>{assert.deepEqual(await fs.readFile(workspaceFile),workspace);assert.deepEqual(await fs.readFile(catalogFile),catalog);assert.equal(await fs.readFile(identity,'utf8'),'local-only');};
+await installer.prepareUpdate(root,bytes,{version:update.version,digest:sha256(bytes)});
+await installer.applyPreparedUpdate(root);
+await installer.rollbackUpdate(root,'QA de recuperação');
+assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'))).version,'0.1.0');await checkData();
+await installer.prepareUpdate(root,bytes,{version:update.version,digest:sha256(bytes)});
+await installer.applyPreparedUpdate(root);
+let output='';
+const child=spawn(process.execPath,['--use-system-ca',path.join(root,'scripts/serve.mjs')],{cwd:root,windowsHide:true,env:{...process.env,SCRATCHES_PORT:'0',SCRATCHES_UPDATE_CHECKS:'0',SCRATCHES_MANAGED_RUNNER:'1'},stdio:['ignore','pipe','pipe','ipc']});
+child.stdout.on('data',chunk=>output+=chunk);child.stderr.on('data',chunk=>output+=chunk);
+try {
+  const ready=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error(output || 'Servidor não iniciou.')),15000);child.once('error',reject);child.once('exit',code=>{clearTimeout(timer);reject(Error('Servidor encerrou '+code+': '+output));});child.once('message',message=>{clearTimeout(timer);resolve(message);});});
+  assert.equal(ready.version,update.version);
+  const url=output.match(/http:\/\/127\.0\.0\.1:\d+/)?.[0];assert.ok(url);
+  assert.equal((await fetch(url)).status,200);
+  const served=await(await fetch(url+'/catalogo/catalogo.json')).json();
+  const seed=JSON.parse(await fs.readFile(path.join(root,'lib/seed/catalog.json'),'utf8'));
+  assert.equal(served.tracks.length,seed.tracks.length);assert.equal(served.tracks.length,951);
+  assert.equal((await fetch(url+'/api/music/search?q=x&provider=invalido')).status,400);
+  assert.equal((await fetch(url+'/api/artwork?source=http://localhost')).status,400);
+  await installer.confirmUpdate(root);await checkData();
+  const report={version:update.version,oldDecoderAccepted:true,rollbackVerified:true,bootVerified:true,workspacePreserved:true,catalogPreserved:true,seedTracks:served.tracks.length,root};
+  await fs.writeFile('.scratches/release-legacy-proof.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+} finally {if(child.exitCode===null){const done=new Promise(resolve=>child.once('exit',resolve));child.send({type:'shutdown'});await done;}}

@@ -1,4 +1,5 @@
 import {IconButton} from './Controls.tsx';
+import {Artwork} from './Artwork.tsx';
 import {useEffect, useRef} from 'react';
 import type {ReactNode} from 'react';
 import {MagnifyingGlassIcon} from '@phosphor-icons/react/dist/csr/MagnifyingGlass';
@@ -43,7 +44,7 @@ export function Icon({name, size = 20, weight = 'regular'}: {name: IconName; siz
   const Glyph = icons[name];
   return <Glyph size={size} weight={weight} aria-hidden="true" focusable="false"/>;
 }
-export function Cover({track, large = false}: {track: Track; large?: boolean}) {return track.cover ? <img className={'cover' + (large ? ' large' : '')} src={track.cover} alt={'Capa de ' + track.catalogAlbum} loading="lazy"/> : <span className="cover cover-fallback"><Icon name="file"/></span>;}
+export function Cover({track, large = false}: {track: Track; large?: boolean}) {return <Artwork source={track.cover} className={'cover' + (large ? ' large' : '')} alt={'Capa de ' + (track.catalogAlbum || track.title)} fallback={<span className={'cover cover-fallback' + (large ? ' large' : '')}><Icon name="file"/></span>}/>;}
 export function Empty({title, children, action}: {title: string; children?: ReactNode; action?: ReactNode}) {return <div className="empty"><span className="empty-icon"><Icon name="folder" size={28}/></span><h2>{title}</h2><div className="muted">{children}</div>{action}</div>;}
 export function Dialog({title, onClose, children, className = '', closeDisabled = false}: {title: string; onClose: () => void; children: ReactNode; className?: string; closeDisabled?: boolean}) {
   const ref = useRef<HTMLDialogElement>(null); const closer = useRef(onClose); closer.current = onClose;

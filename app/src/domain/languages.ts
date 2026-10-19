@@ -36,10 +36,10 @@ export function suggestLanguages(catalog: LanguageOption[], saved: string[], sel
   const byLabel = new Map(catalog.map(option => [normalize(option.label), option]));
   const byCode = new Map(catalog.flatMap(option => option.codes.map(code => [code, option] as const)));
   // Sugestões iniciais de navegação; a busca continua cobrindo todo o catálogo.
-  const starterCodes = ['por', 'eng', 'spa', 'fra', 'ita', 'deu', 'jpn', 'kor', 'zho', 'ara', 'hin', 'rus'];
+  const starters = [['por', 'Português'], ['eng', 'Inglês'], ['spa', 'Espanhol'], ['fra', 'Francês'], ['ita', 'Italiano'], ['deu', 'Alemão'], ['jpn', 'Japonês'], ['kor', 'Coreano'], ['zho', 'Chinês'], ['ara', 'Árabe'], ['hin', 'Hindi'], ['rus', 'Russo']];
   const used = [...counts.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'pt-BR'))
     .map(item => byLabel.get(normalize(item.label)) ?? customLanguage(item.label));
-  const candidates = [...used, ...starterCodes.flatMap(code => {const option = byCode.get(code); return option ? [option] : [];})];
+  const candidates = [...used, ...starters.map(([code, label]) => byCode.get(code) ?? {...customLanguage(label), codes: [code]})];
   const seen = new Set<string>();
   const suggestions = candidates.filter(option => {
     const key = normalize(option.label);
@@ -52,6 +52,10 @@ export function suggestLanguages(catalog: LanguageOption[], saved: string[], sel
     if (!visible.has(key)) {suggestions.push(byLabel.get(key) ?? customLanguage(label)); visible.add(key);}
   }
   return suggestions;
+}
+
+export function allLanguageOptions(catalog: LanguageOption[], saved: string[], selected: string[]): LanguageOption[] {
+  return [...new Map([...suggestLanguages(catalog, saved, selected), ...catalog].map(option => [option.value, option])).values()];
 }
 
 export function searchLanguages(catalog: LanguageOption[], query: string, saved: string[], selected: string[]): LanguageOption[] {
